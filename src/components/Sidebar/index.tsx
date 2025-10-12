@@ -14,34 +14,34 @@ interface SidebarProps {
 }
 
 export const menuGroups = [
-  {
-    name: "DASHBOARD",
-    menuItems: [
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z"
-              fill="currentColor"
-            />
-          </svg>
-        ),
-        label: "Dashboard",
-        route: "#",
-        children: [
-          { label: "Overview", route: "/" },
-          { label: "Sales Analytics", route: "/dashboard/analytics" },
-          { label: "Orders", route: "/dashboard/orders" },
-        ],
-      },
-    ],
-  },
+  // {
+  //   name: "DASHBOARD",
+  //   menuItems: [
+  //     {
+  //       icon: (
+  //         <svg
+  //           className="fill-current"
+  //           width="24"
+  //           height="24"
+  //           viewBox="0 0 24 24"
+  //           xmlns="http://www.w3.org/2000/svg"
+  //         >
+  //           <path
+  //             d="M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z"
+  //             fill="currentColor"
+  //           />
+  //         </svg>
+  //       ),
+  //       label: "Dashboard",
+  //       route: "#",
+  //       children: [
+  //         { label: "Overview", route: "/" },
+  //         { label: "Sales Analytics", route: "/dashboard/analytics" },
+  //         { label: "Orders", route: "/dashboard/orders" },
+  //       ],
+  //     },
+  //   ],
+  // },
   {
     name: "PRODUCTS",
     menuItems: [
@@ -66,112 +66,112 @@ export const menuGroups = [
           { label: "All Products", route: "/products" },
           { label: "Add Product", route: "/products/add" },
           // { label: "Categories", route: "/products/categories" },
-          { label: "Inventory", route: "/products/inventory" },
+          // { label: "Inventory", route: "/products/inventory" },
         ],
       },
     ],
   },
-  {
-    name: "ORDERS & CUSTOMERS",
-    menuItems: [
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M20 4H4V6H20V4ZM4 8H20L19 20H5L4 8ZM7 10L7.5 18H16.5L17 10H7Z"
-              fill="currentColor"
-            />
-          </svg>
-        ),
-        label: "Orders",
-        route: "#",
-        children: [
-          { label: "All Orders", route: "/orders" },
-          { label: "Pending Orders", route: "/orders/pending" },
-          { label: "Completed Orders", route: "/orders/completed" },
-        ],
-      },
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12ZM4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20H4Z"
-              fill="currentColor"
-            />
-          </svg>
-        ),
-        label: "Customers",
-        route: "#",
-        children: [
-          { label: "All Customers", route: "/customers" },
-          { label: "Add Customer", route: "/customers/add" },
-          { label: "Customer Groups", route: "/customers/groups" },
-        ],
-      },
-    ],
-  },
-  {
-    name: "SETTINGS & OTHERS",
-    menuItems: [
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 2C13.11 2 14 2.89 14 4V5H10V4C10 2.89 10.89 2 12 2ZM19 7H5C3.9 7 3 7.9 3 9V20C3 21.11 3.9 22 5 22H19C20.11 22 21 21.11 21 20V9C21 7.9 20.11 7 19 7ZM12 19C10.34 19 9 17.66 9 16C9 14.34 10.34 13 12 13C13.66 13 15 14.34 15 16C15 17.66 13.66 19 12 19Z"
-              fill="currentColor"
-            />
-          </svg>
-        ),
-        label: "Settings",
-        route: "#",
-        children: [
-          { label: "General", route: "/settings/general" },
-          { label: "Payment", route: "/settings/payment" },
-          { label: "Shipping", route: "/settings/shipping" },
-        ],
-      },
-      {
-        icon: (
-          <svg
-            className="fill-current"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 13H21V11H3V13ZM3 6H21V4H3V6ZM3 20H21V18H3V20Z"
-              fill="currentColor"
-            />
-          </svg>
-        ),
-        label: "Reports",
-        route: "#",
-        children: [
-          { label: "Sales Report", route: "/reports/sales" },
-          { label: "Inventory Report", route: "/reports/inventory" },
-        ],
-      },
-    ],
-  },
+  // {
+  //   name: "ORDERS & CUSTOMERS",
+  //   menuItems: [
+  //     {
+  //       icon: (
+  //         <svg
+  //           className="fill-current"
+  //           width="24"
+  //           height="24"
+  //           viewBox="0 0 24 24"
+  //           xmlns="http://www.w3.org/2000/svg"
+  //         >
+  //           <path
+  //             d="M20 4H4V6H20V4ZM4 8H20L19 20H5L4 8ZM7 10L7.5 18H16.5L17 10H7Z"
+  //             fill="currentColor"
+  //           />
+  //         </svg>
+  //       ),
+  //       label: "Orders",
+  //       route: "#",
+  //       children: [
+  //         { label: "All Orders", route: "/orders" },
+  //         { label: "Pending Orders", route: "/orders/pending" },
+  //         { label: "Completed Orders", route: "/orders/completed" },
+  //       ],
+  //     },
+  //     {
+  //       icon: (
+  //         <svg
+  //           className="fill-current"
+  //           width="24"
+  //           height="24"
+  //           viewBox="0 0 24 24"
+  //           xmlns="http://www.w3.org/2000/svg"
+  //         >
+  //           <path
+  //             d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12ZM4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20H4Z"
+  //             fill="currentColor"
+  //           />
+  //         </svg>
+  //       ),
+  //       label: "Customers",
+  //       route: "#",
+  //       children: [
+  //         { label: "All Customers", route: "/customers" },
+  //         { label: "Add Customer", route: "/customers/add" },
+  //         { label: "Customer Groups", route: "/customers/groups" },
+  //       ],
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: "SETTINGS & OTHERS",
+  //   menuItems: [
+  //     {
+  //       icon: (
+  //         <svg
+  //           className="fill-current"
+  //           width="24"
+  //           height="24"
+  //           viewBox="0 0 24 24"
+  //           xmlns="http://www.w3.org/2000/svg"
+  //         >
+  //           <path
+  //             d="M12 2C13.11 2 14 2.89 14 4V5H10V4C10 2.89 10.89 2 12 2ZM19 7H5C3.9 7 3 7.9 3 9V20C3 21.11 3.9 22 5 22H19C20.11 22 21 21.11 21 20V9C21 7.9 20.11 7 19 7ZM12 19C10.34 19 9 17.66 9 16C9 14.34 10.34 13 12 13C13.66 13 15 14.34 15 16C15 17.66 13.66 19 12 19Z"
+  //             fill="currentColor"
+  //           />
+  //         </svg>
+  //       ),
+  //       label: "Settings",
+  //       route: "#",
+  //       children: [
+  //         { label: "General", route: "/settings/general" },
+  //         { label: "Payment", route: "/settings/payment" },
+  //         { label: "Shipping", route: "/settings/shipping" },
+  //       ],
+  //     },
+  //     {
+  //       icon: (
+  //         <svg
+  //           className="fill-current"
+  //           width="24"
+  //           height="24"
+  //           viewBox="0 0 24 24"
+  //           xmlns="http://www.w3.org/2000/svg"
+  //         >
+  //           <path
+  //             d="M3 13H21V11H3V13ZM3 6H21V4H3V6ZM3 20H21V18H3V20Z"
+  //             fill="currentColor"
+  //           />
+  //         </svg>
+  //       ),
+  //       label: "Reports",
+  //       route: "#",
+  //       children: [
+  //         { label: "Sales Report", route: "/reports/sales" },
+  //         { label: "Inventory Report", route: "/reports/inventory" },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];
 
 
