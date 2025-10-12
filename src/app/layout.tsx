@@ -4,7 +4,7 @@ import "flatpickr/dist/flatpickr.min.css";
 import "@/css/satoshi.css";
 import "@/css/style.css";
 import React, { useEffect, useState } from "react";
-import { isAuthenticated } from "@/utils/auth";
+
 import { useRouter } from "next/navigation";
 import Loader from "@/components/common/Loader";
 import { Toaster } from "react-hot-toast";
@@ -17,11 +17,12 @@ export default function RootLayout({
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
   useEffect(() => {
-    // If no admin token → redirect to signin
-    if (!isAuthenticated()) {
-      router.replace("/auth/signin");
-    }
-  }, [])
+
+      const token = localStorage.getItem("adminToken");
+      if (!token) router.replace("/auth/signin");
+    
+  }, [router]);
+
   // const pathname = usePathname();
 
   useEffect(() => {

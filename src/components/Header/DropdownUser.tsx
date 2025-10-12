@@ -44,7 +44,7 @@ const DropdownUser = () => {
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     setDropdownOpen(false);
-    router.push("/signin");
+    router.push("/auth/signin");
   };
 
   return (
@@ -89,7 +89,6 @@ const DropdownUser = () => {
             {/* Header */}
             <div className="flex items-center gap-3  border-b border-gray-100 dark:border-gray-700">
               <div
-                className="h-11 w-11 ml-3 flex items-center justify-center rounded-full text-white font-semibold text-lg"
                 style={{
                   background: "linear-gradient(135deg, #1daa61, #7be495)",
                 }}
