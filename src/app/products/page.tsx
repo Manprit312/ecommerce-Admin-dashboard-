@@ -57,7 +57,7 @@ export default function AllProductsPage() {
     try {
       toast.loading("Deleting product...", { id: "delete-toast" });
 
-      const res = await fetch(`http://api.nextjs.aydpm.in/api/products/${deletePopup}`, {
+      const res = await fetch(`https://api.nextjs.aydpm.in/api/products/${deletePopup}`, {
         method: "DELETE",
       });
 

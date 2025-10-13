@@ -20,7 +20,7 @@ export default function EditProductPage() {
   useEffect(() => {
     async function fetchProduct() {
       try {
-        const res = await fetch(`http://api.nextjs.aydpm.in/api/products/${id}`);
+        const res = await fetch(`https://api.nextjs.aydpm.in/api/products/${id}`);
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
 
@@ -154,7 +154,7 @@ export default function EditProductPage() {
     toast.loading("Updating product...");
 
     try {
-      const res = await fetch(`http://api.nextjs.aydpm.in/api/products/${id}`, {
+      const res = await fetch(`https://api.nextjs.aydpm.in/api/products/${id}`, {
         method: "PUT",
         body: formData,
       });

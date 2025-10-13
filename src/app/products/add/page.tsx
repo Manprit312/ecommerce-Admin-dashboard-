@@ -141,7 +141,7 @@ export default function AddProductPage() {
     images.forEach((img) => formData.append("images", img));
 
     try {
-      const res = await fetch("http://api.nextjs.aydpm.in/api/products", {
+      const res = await fetch("https://api.nextjs.aydpm.in/api/products", {
         method: "POST",
         body: formData,
       });
