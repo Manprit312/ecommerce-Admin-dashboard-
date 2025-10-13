@@ -22,7 +22,7 @@ const DropdownUser = () => {
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) return;
-      const res = await fetch("http://localhost:5000/api/admin/me", {
+      const res = await fetch("http://api.nextjs.aydpm.in/api/admin/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
