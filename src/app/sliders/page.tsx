@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Trash2, PlusCircle, Edit, X, Loader2 } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-
+const apiUrl=process.env.NEXT_PUBLIC_API_URL
 export default function AdminSlidersPage() {
   const [sliders, setSliders] = useState<any[]>([]);
   const [form, setForm] = useState({
@@ -24,7 +24,7 @@ export default function AdminSlidersPage() {
   const fetchSliders = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/sliders");
+      const res = await fetch(`${apiUrl}/sliders`);
       const data = await res.json();
       setSliders(data);
     } catch (err) {
@@ -72,8 +72,8 @@ export default function AdminSlidersPage() {
 
       const res = await fetch(
         editingId
-          ? `http://localhost:5000/api/sliders/${editingId}`
-          : "http://localhost:5000/api/sliders",
+          ? `${apiUrl}/sliders/${editingId}`
+          : `${apiUrl}/sliders`,
         {
           method: editingId ? "PUT" : "POST",
           body: formData,

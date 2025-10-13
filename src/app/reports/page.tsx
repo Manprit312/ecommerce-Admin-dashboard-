@@ -5,7 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { TrendingUp, Users, Package, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
-
+const apiUrl=process.env.NEXT_PUBLIC_API_URL
 export default function ReportsPage() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ export default function ReportsPage() {
   const fetchReport = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/reports");
+      const res = await fetch(`${apiUrl}/reports`);
       const data = await res.json();
       setReport(data);
     } catch (err) {
