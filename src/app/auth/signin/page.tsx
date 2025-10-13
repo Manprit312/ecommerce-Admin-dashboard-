@@ -42,7 +42,7 @@ const SignInAdmin: React.FC = () => {
 
       toast.success("✅ Login successful!");
       localStorage.setItem("adminToken", data.token);
-      setTimeout(() => router.push("/"), 1500);
+      setTimeout(() => router.push("/products"), 1500);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
