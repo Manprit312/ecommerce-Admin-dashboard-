@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2, Edit3, Check, XCircle, Package } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function ProductInventoryPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +14,7 @@ export default function ProductInventoryPage() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await fetch("https://api.nextjs.aydpm.in/api/products");
+        const res = await fetch(`${apiUrl}/products`);
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
         setProducts(data);
@@ -32,7 +32,7 @@ export default function ProductInventoryPage() {
   const handleSaveStock = async (id: string) => {
     if (updatedStock === null) return;
     try {
-      const res = await fetch(`https://api.nextjs.aydpm.in/api/products/${id}`, {
+      const res = await fetch(`${apiUrl}/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ stock: updatedStock }),

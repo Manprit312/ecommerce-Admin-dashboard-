@@ -1,20 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { toast, Toaster } from "react-hot-toast";
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function AddProductPage() {
   const router = useRouter();
 
+  const [categories, setCategories] = useState<any[]>([]); // fetched categories
   const [form, setForm] = useState({
     name: "",
     price: "",
     description: "",
-    categories: [""],
+    categories: [] as string[], // store selected category IDs
     rating: "",
     reviews: "",
     badge: "",
@@ -31,13 +32,27 @@ export default function AddProductPage() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Generic input handler
+  // ✅ Fetch categories from backend
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/categories`);
+        if (!res.ok) throw new Error("Failed to load categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (err: any) {
+        toast.error("❌ Failed to load categories: " + err.message);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // 🔹 Input handlers
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 Specs input handler
   const handleSpecsChange = (key: string, value: string) => {
     setForm((prev) => ({
       ...prev,
@@ -45,7 +60,6 @@ export default function AddProductPage() {
     }));
   };
 
-  // 🔹 Dynamic features
   const handleFeatureChange = (index: number, value: string) => {
     const features = [...form.specs.features];
     features[index] = value;
@@ -69,22 +83,17 @@ export default function AddProductPage() {
     }));
   };
 
-  // 🔹 Dynamic categories
-  const handleCategoryChange = (index: number, value: string) => {
-    const categories = [...form.categories];
-    categories[index] = value;
-    setForm((prev) => ({ ...prev, categories }));
+  // ✅ Category selection handler
+  const handleCategorySelect = (id: string) => {
+    setForm((prev) => {
+      const selected = new Set(prev.categories);
+      if (selected.has(id)) selected.delete(id);
+      else selected.add(id);
+      return { ...prev, categories: Array.from(selected) };
+    });
   };
 
-  const addCategory = () =>
-    setForm((prev) => ({ ...prev, categories: [...prev.categories, ""] }));
-
-  const removeCategory = (index: number) => {
-    const categories = form.categories.filter((_, i) => i !== index);
-    setForm((prev) => ({ ...prev, categories }));
-  };
-
-  // 🔹 Image upload handling
+  // 🔹 Image Upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     const total = [...images, ...files];
@@ -95,12 +104,10 @@ export default function AddProductPage() {
 
     const newFiles = [...images, ...files];
     setImages(newFiles);
-
     const newUrls = [...previewUrls, ...files.map((file) => URL.createObjectURL(file))];
     setPreviewUrls(newUrls);
   };
 
-  // ❌ Remove single image before upload
   const removeImage = (index: number) => {
     const newFiles = images.filter((_, i) => i !== index);
     const newUrls = previewUrls.filter((_, i) => i !== index);
@@ -113,7 +120,7 @@ export default function AddProductPage() {
     if (!form.name.trim()) return "Product name is required.";
     if (!form.price || parseFloat(form.price) <= 0) return "Enter a valid price.";
     if (!form.description.trim()) return "Description is required.";
-    if (form.categories.length === 0 || !form.categories[0].trim()) return "At least one category required.";
+    if (form.categories.length === 0) return "Please select at least one category.";
     if (images.length === 0) return "Please upload at least one image.";
     return null;
   };
@@ -122,34 +129,29 @@ export default function AddProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errorMsg = validateForm();
-    if (errorMsg) {
-      toast.error(errorMsg);
-      return;
-    }
+    if (errorMsg) return toast.error(errorMsg);
 
     setLoading(true);
     const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("price", form.price);
-    formData.append("description", form.description);
-    formData.append("categories", JSON.stringify(form.categories));
-    formData.append("specs", JSON.stringify(form.specs));
-    formData.append("rating", form.rating);
-    formData.append("reviews", form.reviews);
-    formData.append("inStock", String(form.inStock));
-    formData.append("badge", form.badge);
+
+    Object.entries(form).forEach(([key, value]) => {
+      if (key === "specs" || key === "categories") {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, value as string);
+      }
+    });
     images.forEach((img) => formData.append("images", img));
 
     try {
-      const res = await fetch("https://api.nextjs.aydpm.in/api/products", {
+      const res = await fetch(`${apiUrl}/products`, {
         method: "POST",
         body: formData,
       });
 
       if (!res.ok) throw new Error("Failed to add product");
-
       toast.success("✅ Product added successfully!");
-      setTimeout(() => router.push("/products"), 1500);
+      setTimeout(() => router.push("/products"), 1200);
     } catch (err: any) {
       toast.error("❌ " + err.message);
     } finally {
@@ -173,7 +175,7 @@ export default function AddProductPage() {
           onSubmit={handleSubmit}
           className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-6"
         >
-          {/* Name & Price */}
+          {/* Basic Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
@@ -181,7 +183,6 @@ export default function AddProductPage() {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                required
                 className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
               />
             </div>
@@ -194,7 +195,6 @@ export default function AddProductPage() {
                 step="0.01"
                 value={form.price}
                 onChange={handleChange}
-                required
                 className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
               />
             </div>
@@ -208,42 +208,39 @@ export default function AddProductPage() {
               value={form.description}
               onChange={handleChange}
               rows={4}
-              required
               className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
             />
           </div>
 
-          {/* Categories */}
+          {/* ✅ Category Selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Categories</label>
-            {form.categories.map((cat, i) => (
-              <div key={i} className="flex gap-3 mb-2">
-                <input
-                  value={cat}
-                  onChange={(e) => handleCategoryChange(i, e.target.value)}
-                  placeholder="Category name"
-                  className="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-                />
-                {i > 0 && (
-                  <button type="button" onClick={() => removeCategory(i)} className="text-red-500">
-                    <Trash2 className="w-5 h-5" />
+            <div className="flex flex-wrap gap-3">
+              {categories.length > 0 ? (
+                categories.map((cat) => (
+                  <button
+                    type="button"
+                    key={cat._id}
+                    onClick={() => handleCategorySelect(cat._id)}
+                    className={`px-4 py-1 rounded-full border ${
+                      form.categories.includes(cat._id)
+                        ? "bg-[#1daa61] text-white border-[#1daa61]"
+                        : "border-gray-300 text-gray-700 hover:border-[#1daa61]"
+                    }`}
+                  >
+                    {cat.name}
                   </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addCategory}
-              className="flex items-center text-[#1daa61] font-medium mt-2"
-            >
-              <Plus className="w-4 h-4 mr-1" /> Add Category
-            </button>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">No categories found.</p>
+              )}
+            </div>
           </div>
 
           {/* Specs */}
           <div>
             <h3 className="text-lg font-semibold mb-3 text-gray-800">Specifications</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-4">
+            <div className="grid sm:grid-cols-3 gap-4 mb-4">
               <input
                 placeholder="Material"
                 value={form.specs.material}
@@ -292,75 +289,53 @@ export default function AddProductPage() {
           {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
-            <div className="flex flex-col gap-3">
-              <input
-                type="file"
-                name="images"
-                multiple
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-              {previewUrls.length > 0 && (
-                <div className="flex flex-wrap gap-4 mt-3">
-                  {previewUrls.map((url, i) => (
-                    <div key={i} className="relative">
-                      <img
-                        src={url}
-                        alt="preview"
-                        className="w-24 h-24 object-cover rounded-lg border"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(i)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <input type="file" multiple accept="image/*" onChange={handleFileChange} />
+            {previewUrls.length > 0 && (
+              <div className="flex flex-wrap gap-4 mt-3">
+                {previewUrls.map((url, i) => (
+                  <div key={i} className="relative">
+                    <img src={url} alt="preview" className="w-24 h-24 object-cover rounded-lg border" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Misc Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Badge</label>
-              <input
-                name="badge"
-                value={form.badge}
-                onChange={handleChange}
-                placeholder="e.g. Bestseller"
-                className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-              <input
-                name="rating"
-                type="number"
-                step="0.1"
-                value={form.rating}
-                onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reviews</label>
-              <input
-                name="reviews"
-                type="number"
-                value={form.reviews}
-                onChange={handleChange}
-                className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-            </div>
+          {/* Extra Fields */}
+          <div className="grid sm:grid-cols-3 gap-4">
+            <input
+              name="badge"
+              placeholder="Badge (e.g. Bestseller)"
+              value={form.badge}
+              onChange={handleChange}
+              className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+            />
+            <input
+              name="rating"
+              type="number"
+              placeholder="Rating"
+              value={form.rating}
+              onChange={handleChange}
+              className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+            />
+            <input
+              name="reviews"
+              type="number"
+              placeholder="Reviews"
+              value={form.reviews}
+              onChange={handleChange}
+              className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+            />
           </div>
 
-          {/* Stock */}
+          {/* Stock Checkbox */}
           <div className="flex items-center gap-2">
             <input
               type="checkbox"

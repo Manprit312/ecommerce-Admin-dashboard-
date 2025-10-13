@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const RegisterAdmin: React.FC = () => {
   const router = useRouter();
 
@@ -39,7 +39,7 @@ const RegisterAdmin: React.FC = () => {
 
     try {
       setLoading(true);
-      const res = await fetch("https://api.nextjs.aydpm.in/api/admin/register", {
+      const res = await fetch(`${apiUrl}/admin/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

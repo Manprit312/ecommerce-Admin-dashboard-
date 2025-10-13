@@ -43,6 +43,31 @@ export const menuGroups = [
   //   ],
   // },
   {
+    name: "Hero Section",
+    menuItems: [
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 5H21C21.5523 5 22 5.44772 22 6V18C22 18.5523 21.5523 19 21 19H3C2.44772 19 2 18.5523 2 18V6C2 5.44772 2.44772 5 3 5ZM4 7V17H20V7H4ZM6 9H18V11H6V9ZM6 13H12V15H6V13Z"
+              fill="currentColor"
+            />
+          </svg>
+        ),
+        label: "Hero Section",
+        route: "/sliders",
+
+      },
+     
+    ],
+  },
+  {
     name: "PRODUCTS",
     menuItems: [
       {
@@ -71,57 +96,171 @@ export const menuGroups = [
       },
     ],
   },
-  // {
-  //   name: "ORDERS & CUSTOMERS",
-  //   menuItems: [
-  //     {
-  //       icon: (
-  //         <svg
-  //           className="fill-current"
-  //           width="24"
-  //           height="24"
-  //           viewBox="0 0 24 24"
-  //           xmlns="http://www.w3.org/2000/svg"
-  //         >
-  //           <path
-  //             d="M20 4H4V6H20V4ZM4 8H20L19 20H5L4 8ZM7 10L7.5 18H16.5L17 10H7Z"
-  //             fill="currentColor"
-  //           />
-  //         </svg>
-  //       ),
-  //       label: "Orders",
-  //       route: "#",
-  //       children: [
-  //         { label: "All Orders", route: "/orders" },
-  //         { label: "Pending Orders", route: "/orders/pending" },
-  //         { label: "Completed Orders", route: "/orders/completed" },
-  //       ],
-  //     },
-  //     {
-  //       icon: (
-  //         <svg
-  //           className="fill-current"
-  //           width="24"
-  //           height="24"
-  //           viewBox="0 0 24 24"
-  //           xmlns="http://www.w3.org/2000/svg"
-  //         >
-  //           <path
-  //             d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12ZM4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20H4Z"
-  //             fill="currentColor"
-  //           />
-  //         </svg>
-  //       ),
-  //       label: "Customers",
-  //       route: "#",
-  //       children: [
-  //         { label: "All Customers", route: "/customers" },
-  //         { label: "Add Customer", route: "/customers/add" },
-  //         { label: "Customer Groups", route: "/customers/groups" },
-  //       ],
-  //     },
-  //   ],
-  // },
+   {
+    name: "Orders",
+    menuItems: [
+      {
+        icon: (
+         <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20 4H4V6H20V4ZM4 8H20L19 20H5L4 8ZM7 10L7.5 18H16.5L17 10H7Z"
+              fill="currentColor"
+            />
+          </svg>
+        ),
+        label: "Orders",
+        route: "/orders",
+
+      },
+     
+    ],
+  },
+{
+  name: "Enquiry",
+  menuItems: [
+    {
+      icon: (
+        <svg
+          className="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H6L2 22V6C2 4.9 2.9 4 4 4ZM4 6V18.17L5.17 17H20V6H4ZM6 8H18V10H6V8ZM6 12H14V14H6V12Z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      label: "Enquiry",
+      route: "/enquiry",
+    },
+  ],
+},
+{
+  name: "Content",
+  menuItems: [
+    {
+      icon: (
+        <svg
+          className="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4ZM4 6V18H20V6H4ZM12 13H6V11H12V13ZM18 9H6V7H18V9ZM18 17H6V15H18V17Z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      label: "Blogs",
+      route: "/blogs",
+    },
+  ],},
+{
+  name: "Reports",
+  menuItems: [
+    {
+      icon: (
+        <svg
+          className="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 3V21H21V3H3ZM9 17H7V11H9V17ZM13 17H11V7H13V17ZM17 17H15V13H17V17Z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      label: "Monthly Report",
+      route: "/reports",
+    },
+  ],
+},
+{
+  name: "Reports",
+  menuItems: [
+    {
+      icon: (
+       <svg
+  className="fill-current"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M3 5H21V7H3V5ZM3 11H21V13H3V11ZM3 17H21V19H3V17Z"
+    fill="currentColor"
+  />
+</svg>
+
+      ),
+      label: "Categories",
+      route: "/categories",
+    },
+  ],
+}
+  ,
+  
+  {
+    name: "ORDERS & CUSTOMERS",
+    menuItems: [
+      // {
+      //   icon: (
+      //     <svg
+      //       className="fill-current"
+      //       width="24"
+      //       height="24"
+      //       viewBox="0 0 24 24"
+      //       xmlns="http://www.w3.org/2000/svg"
+      //     >
+      //       <path
+      //         d="M20 4H4V6H20V4ZM4 8H20L19 20H5L4 8ZM7 10L7.5 18H16.5L17 10H7Z"
+      //         fill="currentColor"
+      //       />
+      //     </svg>
+      //   ),
+      //   label: "Orders",
+      //   route: "#",
+      //   children: [
+      //     { label: "All Orders", route: "/orders" },
+      //     { label: "Pending Orders", route: "/orders/pending" },
+      //     { label: "Completed Orders", route: "/orders/completed" },
+      //   ],
+      // },
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12ZM4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20H4Z"
+              fill="currentColor"
+            />
+          </svg>
+        ),
+        label: "Customers",
+        route: "/customers",
+      },
+    ],
+  },
   // {
   //   name: "SETTINGS & OTHERS",
   //   menuItems: [
@@ -183,27 +322,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${
-          sidebarOpen
+        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${sidebarOpen
             ? "translate-x-0 duration-300 ease-linear"
             : "-translate-x-full"
-        }`}
+          }`}
       >
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
-        <div className="relative pr-4.5">
-  <Link href="/" className="flex items-center space-x-3">
-    {/* Mint Circle with 'A' */}
-    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1daa61]/20">
-      <span className="text-[#1daa61] font-bold text-xl">A</span>
-    </div>
+          <div className="relative pr-4.5">
+            <Link href="/" className="flex items-center space-x-3">
+              {/* Mint Circle with 'A' */}
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1daa61]/20">
+                <span className="text-[#1daa61] font-bold text-xl">A</span>
+              </div>
 
-    {/* Company Name */}
-    <span className="text-[#1daa61] font-semibold text-2xl sm:text-xl leading-tight">
-      Arya <span className="text-gray-800 font-semibold">Enterprises</span>
-    </span>
-  </Link>
-</div>
+              {/* Company Name */}
+              <span className="text-[#1daa61] font-semibold text-2xl sm:text-xl leading-tight">
+                Arya <span className="text-gray-800 font-semibold">Enterprises</span>
+              </span>
+            </Link>
+          </div>
 
 
           <button
@@ -232,10 +370,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <nav className="mt-1 px-4 lg:px-6">
             {menuGroups.map((group, groupIndex) => (
               <div key={groupIndex}>
-              
+
 
                 <ul className="mb-6 flex flex-col gap-2">
-                  {group.menuItems.map((menuItem, menuIndex) => (
+                  {group?.menuItems.map((menuItem, menuIndex) => (
                     <SidebarItem
                       key={menuIndex}
                       item={menuItem}

@@ -10,6 +10,7 @@ interface AdminPayload {
   role?: string;
   exp?: number;
 }
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const ProfileBox = () => {
   const [admin, setAdmin] = useState<AdminPayload | null>(null);
@@ -18,7 +19,7 @@ const ProfileBox = () => {
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) return;
-      const res = await fetch("https://api.nextjs.aydpm.in/api/admin/me", {
+      const res = await fetch(`${apiUrl}/admin/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

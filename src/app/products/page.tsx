@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Edit, Trash2, PlusCircle, X } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { toast, Toaster } from "react-hot-toast";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AllProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -21,7 +22,7 @@ export default function AllProductsPage() {
   async function fetchProducts() {
     try {
       setLoading(true);
-      const res = await fetch("https://api.nextjs.aydpm.in/api/products");
+      const res = await fetch(`${apiUrl}/products`);
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
       setProducts(data);
@@ -57,7 +58,7 @@ export default function AllProductsPage() {
     try {
       toast.loading("Deleting product...", { id: "delete-toast" });
 
-      const res = await fetch(`https://api.nextjs.aydpm.in/api/products/${deletePopup}`, {
+      const res = await fetch(`${apiUrl}/products/${deletePopup}`, {
         method: "DELETE",
       });
 
