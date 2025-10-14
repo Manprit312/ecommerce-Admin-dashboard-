@@ -13,7 +13,7 @@ export default function InquiriesPage() {
   const fetchInquiries = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${apiUrl}/inquiries`);
+      const res = await fetch(`${apiUrl}inquiries`);
       const data = await res.json();
       setInquiries(data);
     } catch (err) {

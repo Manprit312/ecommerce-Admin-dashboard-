@@ -16,7 +16,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
   async function fetchCustomers() {
     try {
       setLoading(true);
-      const res = await fetch(`${apiUrl}/users`);
+      const res = await fetch(`${apiUrl}users`);
       if (!res.ok) throw new Error("Failed to fetch customers");
       const data = await res.json();
       setCustomers(data);

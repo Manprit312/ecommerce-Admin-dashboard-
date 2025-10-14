@@ -13,7 +13,7 @@ export default function ReportsPage() {
   const fetchReport = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${apiUrl}/reports`);
+      const res = await fetch(`${apiUrl}reports`);
       const data = await res.json();
       setReport(data);
     } catch (err) {

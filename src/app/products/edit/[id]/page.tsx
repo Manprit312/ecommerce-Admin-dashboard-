@@ -22,8 +22,8 @@ export default function EditProductPage() {
     async function fetchData() {
       try {
         const [productRes, catRes] = await Promise.all([
-          fetch(`${apiUrl}/products/${id}`),
-          fetch(`${apiUrl}/categories`),
+          fetch(`${apiUrl}products/${id}`),
+          fetch(`${apiUrl}categories`),
         ]);
 
         if (!productRes.ok || !catRes.ok) throw new Error("Failed to fetch data");

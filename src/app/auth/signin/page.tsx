@@ -31,7 +31,7 @@ const SignInAdmin: React.FC = () => {
 
     try {
       setLoading(true);
-      const res = await fetch(`${apiUrl}/admin/login`, {
+      const res = await fetch(`${apiUrl}admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

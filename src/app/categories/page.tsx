@@ -25,7 +25,7 @@ export default function CategoriesPage() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${apiUrl}/categories`);
+      const res = await fetch(`${apiUrl}categories`);
       const data = await res.json();
       setCategories(data);
     } catch {

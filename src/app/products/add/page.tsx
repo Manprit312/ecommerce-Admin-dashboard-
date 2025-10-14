@@ -36,7 +36,7 @@ export default function AddProductPage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch(`${apiUrl}/categories`);
+        const res = await fetch(`${apiUrl}categories`);
         if (!res.ok) throw new Error("Failed to load categories");
         const data = await res.json();
         setCategories(data);
