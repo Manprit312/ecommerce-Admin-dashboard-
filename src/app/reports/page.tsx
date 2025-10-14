@@ -5,7 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { TrendingUp, Users, Package, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
-const apiUrl=process.env.NEXT_PUBLIC_API_URL
+const apiUrl=process.env.NEXT_PUBLIC_API_URL_ADMIN
 export default function ReportsPage() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);

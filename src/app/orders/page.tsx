@@ -5,7 +5,7 @@ import { Eye, Trash2, Package, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { motion, AnimatePresence } from "framer-motion";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

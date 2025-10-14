@@ -10,7 +10,7 @@ import Image from "next/image";
 // ✅ React Quill (text editor)
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -126,7 +126,7 @@ export default function AdminBlogsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this blog?")) return;
     setLoading(true);
-    await fetch(`http://localhost:5000/api/blogs/${id}`, { method: "DELETE" });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL_ADMIN}api/blogs/${id}`, { method: "DELETE" });
     toast.success("🗑️ Blog deleted");
     fetchBlogs();
   };

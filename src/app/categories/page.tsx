@@ -5,7 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { PlusCircle, Edit, Trash2, Loader2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import Image from "next/image";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -112,7 +112,7 @@ export default function CategoriesPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this category?")) return;
     setLoading(true);
-    await fetch(`http://localhost:5000/api/categories/${id}`, { method: "DELETE" });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL_ADMIN}api/categories/${id}`, { method: "DELETE" });
     toast.success("🗑️ Category deleted");
     fetchCategories();
   };

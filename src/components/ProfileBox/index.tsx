@@ -10,7 +10,7 @@ interface AdminPayload {
   role?: string;
   exp?: number;
 }
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 
 const ProfileBox = () => {
   const [admin, setAdmin] = useState<AdminPayload | null>(null);

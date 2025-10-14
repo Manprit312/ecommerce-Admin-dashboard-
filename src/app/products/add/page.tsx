@@ -6,7 +6,7 @@ import { Plus, Trash2, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { toast, Toaster } from "react-hot-toast";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function AddProductPage() {
   const router = useRouter();
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2, Edit3, Check, XCircle, Package } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function ProductInventoryPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

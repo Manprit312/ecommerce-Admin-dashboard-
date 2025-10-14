@@ -11,7 +11,7 @@ interface Admin {
   name: string;
   email: string;
 }
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [admin, setAdmin] = useState<Admin | null>(null);
@@ -22,7 +22,7 @@ const DropdownUser = () => {
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) return;
-      const res = await fetch("https://api.nextjs.aydpm.in/api/admin/me", {
+      const res = await fetch(`${apiUrl}api/admin/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -117,7 +117,7 @@ const DropdownUser = () => {
                   View Profile
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/pages/settings"
                   onClick={() => setDropdownOpen(false)}
@@ -126,7 +126,7 @@ const DropdownUser = () => {
                   <Settings size={16} />
                   Account Settings
                 </Link>
-              </li>
+              </li> */}
             </ul>
 
             {/* Logout */}

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Edit, Trash2, PlusCircle, X } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { toast, Toaster } from "react-hot-toast";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 
 export default function AllProductsPage() {
   const [products, setProducts] = useState<any[]>([]);

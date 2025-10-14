@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Trash2, PlusCircle, Edit, X, Loader2 } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-const apiUrl=process.env.NEXT_PUBLIC_API_URL
+const apiUrl=process.env.NEXT_PUBLIC_API_URL_ADMIN
 export default function AdminSlidersPage() {
   const [sliders, setSliders] = useState<any[]>([]);
   const [form, setForm] = useState({
@@ -122,7 +122,7 @@ export default function AdminSlidersPage() {
 
     setDeletingId(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/sliders/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL_ADMIN}api/sliders/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete");

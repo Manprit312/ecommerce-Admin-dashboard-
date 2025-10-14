@@ -5,7 +5,7 @@ import { Mail, Trash2, RefreshCw, MessageSquare } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function InquiriesPage() {
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
