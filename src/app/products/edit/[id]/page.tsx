@@ -165,7 +165,7 @@ export default function EditProductPage() {
     toast.loading("Updating product...");
 
     try {
-      const res = await fetch(`${apiUrl}/products/${id}`, {
+      const res = await fetch(`${apiUrl}products/${id}`, {
         method: "PUT",
         body: formData,
       });

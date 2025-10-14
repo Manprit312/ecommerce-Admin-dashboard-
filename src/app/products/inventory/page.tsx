@@ -32,7 +32,7 @@ export default function ProductInventoryPage() {
   const handleSaveStock = async (id: string) => {
     if (updatedStock === null) return;
     try {
-      const res = await fetch(`${apiUrl}/products/${id}`, {
+      const res = await fetch(`${apiUrl}products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ stock: updatedStock }),

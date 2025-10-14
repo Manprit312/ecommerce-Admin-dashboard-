@@ -33,7 +33,7 @@ export default function OrdersPage() {
   const handleStatusChange = async (id: string, newStatus: string) => {
     try {
       setUpdating(true);
-      const res = await fetch(`${apiUrl}/orders/${id}/status`, {
+      const res = await fetch(`${apiUrl}orders/${id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -54,7 +54,7 @@ export default function OrdersPage() {
     if (!confirm("Delete this order?")) return;
 
     try {
-      const res = await fetch(`${apiUrl}/orders/${id}`, {
+      const res = await fetch(`${apiUrl}orders/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete order");

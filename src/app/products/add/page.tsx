@@ -144,7 +144,7 @@ export default function AddProductPage() {
     images.forEach((img) => formData.append("images", img));
 
     try {
-      const res = await fetch(`${apiUrl}/products`, {
+      const res = await fetch(`${apiUrl}products`, {
         method: "POST",
         body: formData,
       });

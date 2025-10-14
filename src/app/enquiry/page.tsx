@@ -29,7 +29,7 @@ export default function InquiriesPage() {
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
-      await fetch(`${apiUrl}/inquiries/${id}/status`, {
+      await fetch(`${apiUrl}inquiries/${id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -43,7 +43,7 @@ export default function InquiriesPage() {
 
   const deleteInquiry = async (id: string) => {
     if (!confirm("Delete this inquiry?")) return;
-    await fetch(`${apiUrl}/inquiries/${id}`, { method: "DELETE" });
+    await fetch(`${apiUrl}inquiries/${id}`, { method: "DELETE" });
     toast.success("🗑️ Deleted");
     fetchInquiries();
   };

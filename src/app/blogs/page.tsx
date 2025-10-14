@@ -32,7 +32,7 @@ export default function AdminBlogsPage() {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${apiUrl}/blogs`);
+      const res = await fetch(`${apiUrl}blogs`);
       const data = await res.json();
       setBlogs(data);
     } catch {
@@ -76,8 +76,8 @@ export default function AdminBlogsPage() {
     try {
       const res = await fetch(
         editingId
-          ? `${apiUrl}/blogs/${editingId}`
-          : `${apiUrl}/blogs`,
+          ? `${apiUrl}blogs/${editingId}`
+          : `${apiUrl}blogs`,
         {
           method: editingId ? "PUT" : "POST",
           body: formData,

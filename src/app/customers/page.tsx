@@ -53,7 +53,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 
     try {
       toast.loading("Deleting user...");
-      const res = await fetch(`${apiUrl}/users/${id}`, {
+      const res = await fetch(`${apiUrl}users/${id}`, {
         method: "DELETE",
       });
 

@@ -330,7 +330,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 xl:py-10">
           <div className="relative pr-4.5">
-            <Link href="/" className="flex items-center space-x-3">
+            <Link href="/products" className="flex items-center space-x-3">
               {/* Mint Circle with 'A' */}
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#1daa61]/20">
                 <span className="text-[#1daa61] font-bold text-xl">A</span>
