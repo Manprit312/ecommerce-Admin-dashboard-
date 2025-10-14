@@ -22,7 +22,7 @@ const DropdownUser = () => {
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) return;
-      const res = await fetch(`${apiUrl}api/admin/me`, {
+      const res = await fetch(`${apiUrl}admin/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,7 +33,7 @@ const DropdownUser = () => {
     } catch (err) {
       console.error("Error fetching admin:", err);
       localStorage.removeItem("adminToken");
-      router.push("/signin");
+      router.push("/auth/signin");
     }
   };
 

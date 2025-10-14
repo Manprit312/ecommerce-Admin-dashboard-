@@ -18,7 +18,7 @@ export default function Home() {
   useEffect(() => {
   
       const token = localStorage.getItem("adminToken");
-      if (!token) router.replace("/signin");
+      if (!token) router.replace("/auth/signin");
     
   }, [router]);
   return (
