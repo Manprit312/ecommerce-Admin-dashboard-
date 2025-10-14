@@ -1,7 +1,30 @@
+import "./loader.css";
+
 const Loader = () => {
   return (
-    <div className="flex h-screen items-center justify-center bg-white dark:bg-dark">
-      <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+    <div className="loader-wrapper">
+      <div className="loader">
+        <div className="box box-1">
+          <div className="side-left"></div>
+          <div className="side-right"></div>
+          <div className="side-top"></div>
+        </div>
+        <div className="box box-2">
+          <div className="side-left"></div>
+          <div className="side-right"></div>
+          <div className="side-top"></div>
+        </div>
+        <div className="box box-3">
+          <div className="side-left"></div>
+          <div className="side-right"></div>
+          <div className="side-top"></div>
+        </div>
+        <div className="box box-4">
+          <div className="side-left"></div>
+          <div className="side-right"></div>
+          <div className="side-top"></div>
+        </div>
+      </div>
     </div>
   );
 };
