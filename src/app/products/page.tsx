@@ -58,7 +58,7 @@ export default function AllProductsPage() {
     try {
       toast.loading("Deleting product...", { id: "delete-toast" });
 
-      const res = await fetch(`${apiUrl}/products/${deletePopup}`, {
+      const res = await fetch(`${apiUrl}products/${deletePopup}`, {
         method: "DELETE",
       });
 

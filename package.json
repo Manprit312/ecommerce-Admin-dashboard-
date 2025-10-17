@@ -12,6 +12,8 @@
     "apexcharts": "^3.45.2",
     "flatpickr": "^4.6.13",
     "framer-motion": "^12.23.24",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "jsvectormap": "^1.5.3",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.545.0",

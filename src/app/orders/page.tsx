@@ -1,10 +1,85 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, Trash2, Package, RefreshCw } from "lucide-react";
+import { Eye, Trash2, Package, RefreshCw,Download } from "lucide-react";
 import toast from "react-hot-toast";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { motion, AnimatePresence } from "framer-motion";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+const generateInvoice = (order: any) => {
+  const doc = new jsPDF();
+
+const mint: [number, number, number] = [29, 170, 97];
+  // 🧾 Header Background
+  doc.setFillColor(...mint);
+  doc.rect(0, 0, 210, 30, "F"); // full-width top bar
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(18);
+  doc.text("INVOICE", 14, 20);
+
+  // 🧍 Customer Info
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(12);
+  doc.text("Customer Details", 14, 40);
+  doc.setDrawColor(...mint);
+  doc.line(14, 42, 196, 42);
+
+  doc.setFontSize(10);
+  doc.text(`Customer: ${order.customerName}`, 14, 50);
+  doc.text(`Email: ${order.email}`, 14, 56);
+  doc.text(`Phone: ${order.phone}`, 14, 62);
+  doc.text(`Address: ${order.address}, ${order.city} - ${order.pincode}`, 14, 68);
+
+  // 💳 Payment Info
+  doc.text("Payment Details", 14, 82);
+  doc.line(14, 84, 196, 84);
+  doc.text(`Payment Method: ${order.paymentMethod}`, 14, 92);
+  doc.text(`Payment Status: ${order.paymentStatus}`, 14, 98);
+  doc.text(`Order Status: ${order.status}`, 14, 104);
+
+  // 📦 Items Table
+  const tableData = order.items.map((item: any) => [
+    item.name,
+    item.quantity,
+    `Rs.${item.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
+    `Rs.${(item.price * item.quantity).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`
+  ]);
+
+  autoTable(doc, {
+    startY: 115,
+    head: [["Item", "Qty", "Price", "Total"]],
+    body: tableData,
+    styles: {
+      fontSize: 10,
+      textColor: [50, 50, 50],
+      lineColor: [200, 200, 200],
+    },
+    headStyles: {
+      fillColor: mint,
+      textColor: [255, 255, 255],
+      fontStyle: "bold",
+    },
+  });
+
+  // 💰 Totals
+  const finalY = (doc as any).lastAutoTable.finalY + 10;
+  doc.setFontSize(12);
+  doc.setTextColor(...mint);
+  doc.text(`Subtotal:Rs.${order.subtotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`, 14, finalY);
+  doc.text(`Total:Rs.${order.totalAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`, 14, finalY + 8);
+
+  // 📅 Footer
+  doc.setFontSize(10);
+  doc.setTextColor(100);
+  doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, finalY + 20);
+  doc.text("Thank you for shopping with us 💚", 14, finalY + 27);
+
+  // 💾 Save
+  doc.save(`Invoice_${order._id}.pdf`);
+};
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -242,17 +317,26 @@ export default function OrdersPage() {
                 ))}
               </div>
 
-              <div className="mt-4 text-right border-t pt-3">
-                <p className="text-gray-700">
-                  <strong>Subtotal:</strong> ₹
-                  {selectedOrder.subtotal.toFixed(2)}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Total:</strong>{" "}
-                  <span className="text-[#1daa61] font-semibold">
-                    ₹{selectedOrder.totalAmount.toFixed(2)}
-                  </span>
-                </p>
+             <div className="mt-4 flex justify-between items-center border-t pt-3">
+  <div>
+    <p className="text-gray-700">
+      <strong>Subtotal:</strong> ₹{selectedOrder.subtotal.toFixed(2)}
+    </p>
+    <p className="text-gray-700">
+      <strong>Total:</strong>{" "}
+      <span className="text-[#1daa61] font-semibold">
+        ₹{selectedOrder.totalAmount.toFixed(2)}
+      </span>
+    </p>
+  </div>
+
+<button
+  onClick={() => generateInvoice(selectedOrder)}
+  className="flex items-center gap-2 px-4 py-2 bg-[#1daa61] text-white rounded-lg hover:bg-[#179f55] transition"
+>
+  <Download className="w-4 h-4" />
+  Download Invoice
+</button>
               </div>
             </motion.div>
           </motion.div>

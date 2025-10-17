@@ -24,7 +24,7 @@ export default function AdminSlidersPage() {
   const fetchSliders = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/sliders`);
+      const res = await fetch(`${apiUrl}sliders`);
       const data = await res.json();
       setSliders(data);
     } catch (err) {
@@ -72,8 +72,8 @@ export default function AdminSlidersPage() {
 
       const res = await fetch(
         editingId
-          ? `${apiUrl}/sliders/${editingId}`
-          : `${apiUrl}/sliders`,
+          ? `${apiUrl}sliders/${editingId}`
+          : `${apiUrl}sliders`,
         {
           method: editingId ? "PUT" : "POST",
           body: formData,

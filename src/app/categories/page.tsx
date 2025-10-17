@@ -112,7 +112,7 @@ export default function CategoriesPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this category?")) return;
     setLoading(true);
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL_ADMIN}api/categories/${id}`, { method: "DELETE" });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL_ADMIN}categories/${id}`, { method: "DELETE" });
     toast.success("🗑️ Category deleted");
     fetchCategories();
   };

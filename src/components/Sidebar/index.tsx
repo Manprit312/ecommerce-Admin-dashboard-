@@ -43,6 +43,29 @@ export const menuGroups = [
   //   ],
   // },
   {
+  name: "Reports",
+  menuItems: [
+    {
+      icon: (
+        <svg
+          className="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 3V21H21V3H3ZM9 17H7V11H9V17ZM13 17H11V7H13V17ZM17 17H15V13H17V17Z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      label: "Dashboard",
+      route: "/reports",
+    },
+  ],
+},
+  {
     name: "Hero Section",
     menuItems: [
       {
@@ -166,29 +189,7 @@ export const menuGroups = [
       route: "/blogs",
     },
   ],},
-{
-  name: "Reports",
-  menuItems: [
-    {
-      icon: (
-        <svg
-          className="fill-current"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M3 3V21H21V3H3ZM9 17H7V11H9V17ZM13 17H11V7H13V17ZM17 17H15V13H17V17Z"
-            fill="currentColor"
-          />
-        </svg>
-      ),
-      label: "Monthly Report",
-      route: "/reports",
-    },
-  ],
-},
+
 {
   name: "Reports",
   menuItems: [
