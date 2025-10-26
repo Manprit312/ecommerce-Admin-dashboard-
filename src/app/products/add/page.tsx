@@ -13,6 +13,8 @@ export default function AddProductPage() {
   const [categories, setCategories] = useState<any[]>([]); // fetched categories
   const [form, setForm] = useState({
     name: "",
+    stockQuantity: "",
+
     price: "",
     description: "",
     categories: [] as string[], // store selected category IDs
@@ -122,6 +124,9 @@ export default function AddProductPage() {
     if (!form.description.trim()) return "Description is required.";
     if (form.categories.length === 0) return "Please select at least one category.";
     if (images.length === 0) return "Please upload at least one image.";
+    if (form.stockQuantity === "" || parseInt(form.stockQuantity) < 0)
+  return "Please enter a valid stock quantity.";
+
     return null;
   };
 
@@ -150,7 +155,7 @@ export default function AddProductPage() {
       });
 
       if (!res.ok) throw new Error("Failed to add product");
-      toast.success("✅ Product added successfully!");
+      toast.success("Product added successfully!");
       setTimeout(() => router.push("/products"), 1200);
     } catch (err: any) {
       toast.error("❌ " + err.message);
@@ -334,6 +339,20 @@ export default function AddProductPage() {
               className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
             />
           </div>
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Stock Quantity
+  </label>
+  <input
+    name="stockQuantity"
+    type="number"
+    min="0"
+    value={form.stockQuantity}
+    onChange={handleChange}
+    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+    placeholder="Enter available quantity"
+  />
+</div>
 
           {/* Stock Checkbox */}
           <div className="flex items-center gap-2">

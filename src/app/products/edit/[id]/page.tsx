@@ -36,6 +36,8 @@ export default function EditProductPage() {
         setCategories(catData);
         setForm({
           ...productData,
+          stockQuantity: productData.stockQuantity || 0,
+
           specs: {
             material: productData.specs?.material || "",
             dimensions: productData.specs?.dimensions || "",
@@ -135,6 +137,9 @@ export default function EditProductPage() {
       return "Please enter a valid price greater than 0";
     if (!form.description.trim()) return "Description is required";
     if (!form.categories.length) return "Please select at least one category";
+    if (form.stockQuantity === "" || Number(form.stockQuantity) < 0)
+  return "Please enter a valid stock quantity";
+
     return null;
   };
 
@@ -159,6 +164,7 @@ export default function EditProductPage() {
     formData.append("inStock", String(form.inStock));
     formData.append("badge", form.badge);
     formData.append("existingImages", JSON.stringify(form.images));
+formData.append("stockQuantity", form.stockQuantity);
 
     newImages.forEach((file) => formData.append("images", file));
 
@@ -173,7 +179,7 @@ export default function EditProductPage() {
       if (!res.ok) throw new Error("Failed to update product");
 
       toast.dismiss();
-      toast.success("✅ Product updated successfully!");
+      toast.success(" Product updated successfully!");
       router.push("/products");
     } catch (err: any) {
       toast.dismiss();
@@ -316,6 +322,20 @@ export default function EditProductPage() {
               </div>
             )}
           </div>
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Stock Quantity
+  </label>
+  <input
+    name="stockQuantity"
+    type="number"
+    min="0"
+    value={form.stockQuantity}
+    onChange={handleChange}
+    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+    placeholder="Enter available quantity"
+  />
+</div>
 
           {/* In Stock */}
           <div className="flex items-center gap-2">
