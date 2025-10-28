@@ -99,7 +99,7 @@ export default function AddProductPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     const total = [...images, ...files];
-    if (total.length > 10) {
+    if (total.length > 24) {
       toast.error("You can upload up to 10 images only!");
       return;
     }
