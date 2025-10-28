@@ -99,7 +99,7 @@ export default function AddProductPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     const total = [...images, ...files];
-    if (total.length > 24) {
+    if (total.length > 50) {
       toast.error("You can upload up to 10 images only!");
       return;
     }
@@ -193,7 +193,7 @@ export default function AddProductPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Price (Rs)</label>
               <input
                 name="price"
                 type="number"

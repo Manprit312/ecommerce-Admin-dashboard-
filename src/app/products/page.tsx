@@ -156,7 +156,7 @@ export default function AllProductsPage() {
                       </td>
 
                       <td className="px-6 py-4 text-gray-700">
-                        ${product.price?.toFixed(2) || "N/A"}
+                        Rs. {product.price?.toFixed(2) || "N/A"}
                       </td>
 
                       <td className="px-4 text-gray-700">
