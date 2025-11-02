@@ -10,6 +10,12 @@ import { toast, Toaster } from "react-hot-toast";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 
 export default function AllProductsPage() {
+  useEffect(() => {
+  if (typeof window !== "undefined") {
+    import("@google/model-viewer");
+  }
+}, []);
+
   const [products, setProducts] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -140,16 +146,51 @@ export default function AllProductsPage() {
                       className="border-t hover:bg-gray-50 cursor-pointer transition"
                     >
                       <td className="px-6 py-4 flex items-center gap-3">
-                        <Image
-                          src={
-                            product.images?.[0] ||
-                            "https://via.placeholder.com/40"
+                        {(() => {
+
+                          const firstMedia =
+                            product.model3D || product.images?.[0] || "https://via.placeholder.com/40";
+
+                          // Detect 3D model files (case-insensitive)
+                          const is3D =
+                            typeof firstMedia === "string" &&
+                            (firstMedia.toLowerCase().endsWith(".glb") ||
+                              firstMedia.toLowerCase().endsWith(".gltf"));
+
+                          if (is3D) {
+                            // ✅ Show 3D model preview
+                            return (
+                              <model-viewer
+                                src={firstMedia}
+                                alt={product.name}
+                                camera-controls
+                                auto-rotate
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  borderRadius: "0.25rem",
+                                  background: "#f4f4f4",
+                                  border: "1px solid #e5e7eb",
+                                }}
+                              ></model-viewer>
+                            );
                           }
-                          alt={product.name}
-                          width={40}
-                          height={40}
-                          className="rounded-md object-cover"
-                        />
+
+                          // ✅ Otherwise show regular image
+                          return (
+                            <Image
+                              src={
+                                firstMedia ||
+                                "https://via.placeholder.com/40"
+                              }
+                              alt={product.name}
+                              width={40}
+                              height={40}
+                              className="rounded-md object-cover"
+                            />
+                          );
+                        })()}
+
                         <span className="font-medium text-gray-900">
                           {product.name}
                         </span>
@@ -174,11 +215,10 @@ export default function AllProductsPage() {
 
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                            product.status === "Active"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-600"
-                          }`}
+                          className={`px-2 py-1 text-xs font-semibold rounded-full ${product.status === "Active"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-600"
+                            }`}
                         >
                           {product.status || "Inactive"}
                         </span>

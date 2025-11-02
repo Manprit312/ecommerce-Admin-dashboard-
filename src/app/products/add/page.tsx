@@ -2,14 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, ArrowLeft, X } from "lucide-react";
+import { Plus, Trash2, ArrowLeft, X, } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { toast, Toaster } from "react-hot-toast";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function AddProductPage() {
-  const router = useRouter();
+  useEffect(() => {
+  if (typeof window !== "undefined") {
+    import("@google/model-viewer");
+  }
+}, []);
 
+  const router = useRouter();
+  const [files, setFiles] = useState<File[]>([]);
+  const [modelFile, setModelFile] = useState<File | null>(null);
   const [categories, setCategories] = useState<any[]>([]); // fetched categories
   const [form, setForm] = useState({
     name: "",
@@ -95,26 +103,40 @@ export default function AddProductPage() {
     });
   };
 
-  // 🔹 Image Upload
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    const total = [...images, ...files];
-    if (total.length > 50) {
-      toast.error("You can upload up to 10 images only!");
-      return;
-    }
 
-    const newFiles = [...images, ...files];
-    setImages(newFiles);
-    const newUrls = [...previewUrls, ...files.map((file) => URL.createObjectURL(file))];
-    setPreviewUrls(newUrls);
-  };
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const newFiles = e.target.files ? Array.from(e.target.files) : [];
 
-  const removeImage = (index: number) => {
-    const newFiles = images.filter((_, i) => i !== index);
-    const newUrls = previewUrls.filter((_, i) => i !== index);
-    setImages(newFiles);
-    setPreviewUrls(newUrls);
+  // Separate image files and 3D models
+  const imageFiles = newFiles.filter((f) => f.type.startsWith("image/"));
+  const modelFiles = newFiles.filter(
+    (f) =>
+      f.name.toLowerCase().endsWith(".glb") ||
+      f.name.toLowerCase().endsWith(".gltf")
+  );
+
+
+const total = [...files, ...imageFiles, ...modelFiles];
+
+  if (total.length > 50) {
+    toast.error("❌ You can upload up to 50 files only!");
+    return;
+  }
+
+  setFiles(total);
+};
+
+
+  const removeFile = (index: number) => {
+    const updated = files.filter((_, i) => i !== index);
+    setFiles(updated);
+
+    // Rebuild preview URLs only for images
+    const imageUrls = updated
+      .filter((f) => f.type.startsWith("image/"))
+      .map((f) => URL.createObjectURL(f));
+
+    setPreviewUrls(imageUrls);
   };
 
   // 🔹 Validation
@@ -123,10 +145,9 @@ export default function AddProductPage() {
     if (!form.price || parseFloat(form.price) <= 0) return "Enter a valid price.";
     if (!form.description.trim()) return "Description is required.";
     if (form.categories.length === 0) return "Please select at least one category.";
-    if (images.length === 0) return "Please upload at least one image.";
+    if (files.length === 0) return "Please upload at least one file (image or 3D model).";
     if (form.stockQuantity === "" || parseInt(form.stockQuantity) < 0)
-  return "Please enter a valid stock quantity.";
-
+      return "Please enter a valid stock quantity.";
     return null;
   };
 
@@ -146,8 +167,12 @@ export default function AddProductPage() {
         formData.append(key, value as string);
       }
     });
-    images.forEach((img) => formData.append("images", img));
+    files.forEach((file) => formData.append("files", file));
 
+    // ✅ Append model file separately (if exists)
+    if (modelFile) {
+      formData.append("model", modelFile);
+    }
     try {
       const res = await fetch(`${apiUrl}products`, {
         method: "POST",
@@ -227,11 +252,10 @@ export default function AddProductPage() {
                     type="button"
                     key={cat._id}
                     onClick={() => handleCategorySelect(cat._id)}
-                    className={`px-4 py-1 rounded-full border ${
-                      form.categories.includes(cat._id)
-                        ? "bg-[#1daa61] text-white border-[#1daa61]"
-                        : "border-gray-300 text-gray-700 hover:border-[#1daa61]"
-                    }`}
+                    className={`px-4 py-1 rounded-full border ${form.categories.includes(cat._id)
+                      ? "bg-[#1daa61] text-white border-[#1daa61]"
+                      : "border-gray-300 text-gray-700 hover:border-[#1daa61]"
+                      }`}
                   >
                     {cat.name}
                   </button>
@@ -293,25 +317,70 @@ export default function AddProductPage() {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
-            <input type="file" multiple accept="image/*" onChange={handleFileChange} />
-            {previewUrls.length > 0 && (
-              <div className="flex flex-wrap gap-4 mt-3">
-                {previewUrls.map((url, i) => (
-                  <div key={i} className="relative">
-                    <img src={url} alt="preview" className="w-24 h-24 object-cover rounded-lg border" />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(i)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Upload Images / 3D Model (.glb)
+            </label>
+
+            <input
+              type="file"
+              multiple
+              accept="image/*,.glb,.gltf"
+              onChange={handleFileChange}
+              className="mb-3"
+            />
+            {files.length > 0 && (
+              <div className="flex flex-wrap gap-6 mt-3">
+                {files.map((file, i) => {
+                  const is3D =
+                    file.name.toLowerCase().endsWith(".glb")
+                    console.log("is3D file:",file.name,is3D);
+      const previewUrl = URL.createObjectURL(file);
+
+                  return (
+                    <div
+                      key={i}
+                      className="relative w-[120px] h-[120px] border rounded-lg overflow-hidden flex items-center justify-center bg-gray-50"
                     >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+                      {/* ✅ Image Preview */}
+                      {!is3D ? (
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        // ✅ 3D Model Preview
+                        <model-viewer
+                          src={previewUrl}
+                          alt="3D Model Preview"
+                          camera-controls
+                          auto-rotate
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            background: "#f9f9f9",
+                            borderRadius: "0.5rem",
+                          }}
+                        ></model-viewer>
+                      )}
+
+                      {/* ❌ Remove Button */}
+                      <button
+                        type="button"
+                        onClick={() => removeFile(i)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
+                        title="Remove file"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             )}
+
           </div>
+
 
           {/* Extra Fields */}
           <div className="grid sm:grid-cols-3 gap-4">
@@ -339,20 +408,20 @@ export default function AddProductPage() {
               className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
             />
           </div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Stock Quantity
-  </label>
-  <input
-    name="stockQuantity"
-    type="number"
-    min="0"
-    value={form.stockQuantity}
-    onChange={handleChange}
-    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-    placeholder="Enter available quantity"
-  />
-</div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Stock Quantity
+            </label>
+            <input
+              name="stockQuantity"
+              type="number"
+              min="0"
+              value={form.stockQuantity}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+              placeholder="Enter available quantity"
+            />
+          </div>
 
           {/* Stock Checkbox */}
           <div className="flex items-center gap-2">
@@ -368,9 +437,8 @@ export default function AddProductPage() {
           <button
             type="submit"
             disabled={loading}
-            className={`mt-4 w-full sm:w-auto px-6 py-2 text-white rounded-lg font-medium ${
-              loading ? "bg-gray-400" : "bg-[#1daa61] hover:bg-[#18b066]"
-            }`}
+            className={`mt-4 w-full sm:w-auto px-6 py-2 text-white rounded-lg font-medium ${loading ? "bg-gray-400" : "bg-[#1daa61] hover:bg-[#18b066]"
+              }`}
           >
             {loading ? "Saving..." : "Save Product"}
           </button>
