@@ -30,6 +30,7 @@ export default function AddProductPage() {
     reviews: "",
     badge: "",
     inStock: true,
+    offer: "",
     specs: {
       material: "",
       dimensions: "",
@@ -407,7 +408,21 @@ const total = [...files, ...imageFiles, ...modelFiles];
               onChange={handleChange}
               className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
             />
+            
           </div>
+          <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Offer</label>
+  <input
+    name="offer"
+    placeholder="e.g. Buy 1 Get 1 Free, 20% Off, Flat ₹500 Off"
+    value={form.offer}
+    onChange={handleChange}
+    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
+  />
+  <p className="text-xs text-gray-500 mt-1">
+    Add any promotional offer or discount label for this product.
+  </p>
+</div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Stock Quantity

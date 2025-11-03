@@ -28,6 +28,7 @@ interface ProductForm {
   images: string[];
   model3D?: string | null;
   removeModel?: boolean;
+  offer?: string;
 }
 
 export default function EditProductPage() {
@@ -35,20 +36,20 @@ export default function EditProductPage() {
   const { id } = useParams();
 
   const [loading, setLoading] = useState(true);
-const [form, setForm] = useState<ProductForm>({
-  name: "",
-  price: "",
-  description: "",
-  categories: [],
-  rating: "",
-  reviews: "",
-  inStock: true,
-  badge: "",
-  stockQuantity: 0,
-  specs: { material: "", dimensions: "", power: "", features: [""] },
-  images: [],
-  model3D: null,
-});
+  const [form, setForm] = useState<ProductForm>({
+    name: "",
+    price: "",
+    description: "",
+    categories: [],
+    rating: "",
+    reviews: "",
+    inStock: true,
+    badge: "",
+    stockQuantity: 0,
+    specs: { material: "", dimensions: "", power: "", features: [""] },
+    images: [],
+    model3D: null,
+  });
 
 
   const [categories, setCategories] = useState<any[]>([]);
@@ -56,11 +57,11 @@ const [form, setForm] = useState<ProductForm>({
   const [modelPreview, setModelPreview] = useState<string | null>(null);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    import("@google/model-viewer");
-  }
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      import("@google/model-viewer");
+    }
+  }, []);
 
   // ✅ Fetch product + categories
   useEffect(() => {
@@ -211,25 +212,25 @@ useEffect(() => {
     setModelPreview(null);
   };
 
- const validateForm = (): string | null => {
-  if (!form) return "Form data is missing.";
+  const validateForm = (): string | null => {
+    if (!form) return "Form data is missing.";
 
-  const name = form.name.trim();
-  const description = form.description.trim();
-  const price = Number(form.price);
-  const stockQty = Number(form.stockQuantity);
+    const name = form.name.trim();
+    const description = form.description.trim();
+    const price = Number(form.price);
+    const stockQty = Number(form.stockQuantity);
 
-  if (!name) return "Product name is required.";
-  if (isNaN(price) || price <= 0)
-    return "Please enter a valid price greater than 0.";
-  if (!description) return "Description is required.";
-  if (!form.categories.length)
-    return "Please select at least one category.";
-  if (isNaN(stockQty) || stockQty < 0)
-    return "Please enter a valid stock quantity.";
+    if (!name) return "Product name is required.";
+    if (isNaN(price) || price <= 0)
+      return "Please enter a valid price greater than 0.";
+    if (!description) return "Description is required.";
+    if (!form.categories.length)
+      return "Please select at least one category.";
+    if (isNaN(stockQty) || stockQty < 0)
+      return "Please enter a valid stock quantity.";
 
-  return null;
-};
+    return null;
+  };
 
 
   // ✅ Submit update
@@ -253,8 +254,8 @@ useEffect(() => {
     formData.append("inStock", String(form.inStock));
     formData.append("badge", form.badge);
     formData.append("existingImages", JSON.stringify(form.images));
-  formData.append("stockQuantity", String(form.stockQuantity)); 
-
+    formData.append("stockQuantity", String(form.stockQuantity));
+formData.append("offer", form.offer || "");
     newImages.forEach((file) => formData.append("files", file));
     if (newModel) formData.append("files", newModel);
     if (form.removeModel) formData.append("removeModel", "true");
@@ -352,8 +353,8 @@ useEffect(() => {
                     key={cat._id}
                     onClick={() => handleCategorySelect(cat._id)}
                     className={`px-4 py-1 rounded-full border ${form.categories.includes(cat._id)
-                        ? "bg-[#1daa61] text-white border-[#1daa61]"
-                        : "border-gray-300 text-gray-700 hover:border-[#1daa61]"
+                      ? "bg-[#1daa61] text-white border-[#1daa61]"
+                      : "border-gray-300 text-gray-700 hover:border-[#1daa61]"
                       }`}
                   >
                     {cat.name}
@@ -392,7 +393,7 @@ useEffect(() => {
               Features (e.g., “Lightweight”, “Durable”)
             </label>
 
-       {(form.specs.features || []).map((f: string, i: number) => (
+            {(form.specs.features || []).map((f: string, i: number) => (
 
               <div key={i} className="flex gap-3 mb-2">
                 <input
@@ -469,69 +470,69 @@ useEffect(() => {
             </div>
           )}
 
-    {/* Upload New Images or 3D Model */}
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    Upload New Images or 3D Model (.glb / .gltf)
-  </label>
+          {/* Upload New Images or 3D Model */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Upload New Images or 3D Model (.glb / .gltf)
+            </label>
 
-  <input
-    type="file"
-    multiple
-    accept="image/*,.glb,.gltf"
-    onChange={handleFileChange}
-    className="w-full border rounded-lg px-4 py-2 cursor-pointer focus:ring-2 focus:ring-[#1daa61]"
-  />
+            <input
+              type="file"
+              multiple
+              accept="image/*,.glb,.gltf"
+              onChange={handleFileChange}
+              className="w-full border rounded-lg px-4 py-2 cursor-pointer focus:ring-2 focus:ring-[#1daa61]"
+            />
 
-  {/* ✅ Show previews for new uploads */}
-  {(previewUrls.length > 0 || modelPreview) && (
-    <div className="flex flex-wrap gap-4 mt-3">
-      {/* ✅ Image previews */}
-      {previewUrls.map((url, i) => (
-        <div key={i} className="relative group">
-          <img
-            src={url}
-            alt="preview"
-            className="w-24 h-24 object-cover rounded-lg border"
-          />
-          <button
-            type="button"
-            onClick={() => removeNewImage(i)}
-            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      ))}
+            {/* ✅ Show previews for new uploads */}
+            {(previewUrls.length > 0 || modelPreview) && (
+              <div className="flex flex-wrap gap-4 mt-3">
+                {/* ✅ Image previews */}
+                {previewUrls.map((url, i) => (
+                  <div key={i} className="relative group">
+                    <img
+                      src={url}
+                      alt="preview"
+                      className="w-24 h-24 object-cover rounded-lg border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeNewImage(i)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
 
-      {/* ✅ 3D model preview */}
-      {modelPreview && (
-        <div className="relative group">
-          <model-viewer
-            src={modelPreview}
-            alt="3D Model Preview"
-            camera-controls
-            auto-rotate
-            style={{
-              width: "100px",
-              height: "100px",
-              border: "1px solid #e5e7eb",
-              borderRadius: "0.5rem",
-              background: "#f9fafb",
-            }}
-          ></model-viewer>
-          <button
-            type="button"
-            onClick={removeNewModel}
-            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-    </div>
-  )}
-</div>
+                {/* ✅ 3D model preview */}
+                {modelPreview && (
+                  <div className="relative group">
+                    <model-viewer
+                      src={modelPreview}
+                      alt="3D Model Preview"
+                      camera-controls
+                      auto-rotate
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "0.5rem",
+                        background: "#f9fafb",
+                      }}
+                    ></model-viewer>
+                    <button
+                      type="button"
+                      onClick={removeNewModel}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
 
           <div>
@@ -547,6 +548,19 @@ useEffect(() => {
               className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
               placeholder="Enter available quantity"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Offer</label>
+            <input
+              name="offer"
+              placeholder="e.g. Buy 1 Get 1 Free, 20% Off, Flat ₹500 Off"
+              value={form.offer}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Add any promotional offer or discount for this product.
+            </p>
           </div>
 
           {/* In Stock */}

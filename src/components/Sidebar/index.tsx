@@ -14,34 +14,31 @@ interface SidebarProps {
 }
 
 export const menuGroups = [
-  // {
-  //   name: "DASHBOARD",
-  //   menuItems: [
-  //     {
-  //       icon: (
-  //         <svg
-  //           className="fill-current"
-  //           width="24"
-  //           height="24"
-  //           viewBox="0 0 24 24"
-  //           xmlns="http://www.w3.org/2000/svg"
-  //         >
-  //           <path
-  //             d="M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z"
-  //             fill="currentColor"
-  //           />
-  //         </svg>
-  //       ),
-  //       label: "Dashboard",
-  //       route: "#",
-  //       children: [
-  //         { label: "Overview", route: "/" },
-  //         { label: "Sales Analytics", route: "/dashboard/analytics" },
-  //         { label: "Orders", route: "/dashboard/orders" },
-  //       ],
-  //     },
-  //   ],
-  // },
+  {
+  name: "Logo",
+  menuItems: [
+    {
+      icon: (
+        // 🪩 Simple "Logo / Image Upload" Icon
+        <svg
+          className="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8L16 2H4ZM13 3.5L18.5 9H13V3.5ZM12 12C10.34 12 9 13.34 9 15C9 16.66 10.34 18 12 18C13.66 18 15 16.66 15 15C15 13.34 13.66 12 12 12Z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      label: "Logo",
+      route: "/logo", // ✅ new route for updating logo
+    },
+  ],
+},
+
   {
   name: "Reports",
   menuItems: [
@@ -144,6 +141,31 @@ export const menuGroups = [
      
     ],
   },
+  {
+  name: "Sale Banner",
+  menuItems: [
+    {
+      icon: (
+        // 🏷️ Sale Tag Icon
+        <svg
+          className="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M21.41 11.58l-9-9A2 2 0 0011 2H4a2 2 0 00-2 2v7c0 .53.21 1.04.59 1.41l9 9a2 2 0 002.82 0l7-7a2 2 0 000-2.83zM7 9a2 2 0 110-4 2 2 0 010 4zm5 8l-6-6h3l6 6h-3z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      label: "Sale Banner",
+      route: "/sale-banner", // ✅ route to admin banner upload page
+    },
+  ],
+},
+
 {
   name: "Enquiry",
   menuItems: [
@@ -219,29 +241,6 @@ export const menuGroups = [
   {
     name: "ORDERS & CUSTOMERS",
     menuItems: [
-      // {
-      //   icon: (
-      //     <svg
-      //       className="fill-current"
-      //       width="24"
-      //       height="24"
-      //       viewBox="0 0 24 24"
-      //       xmlns="http://www.w3.org/2000/svg"
-      //     >
-      //       <path
-      //         d="M20 4H4V6H20V4ZM4 8H20L19 20H5L4 8ZM7 10L7.5 18H16.5L17 10H7Z"
-      //         fill="currentColor"
-      //       />
-      //     </svg>
-      //   ),
-      //   label: "Orders",
-      //   route: "#",
-      //   children: [
-      //     { label: "All Orders", route: "/orders" },
-      //     { label: "Pending Orders", route: "/orders/pending" },
-      //     { label: "Completed Orders", route: "/orders/completed" },
-      //   ],
-      // },
       {
         icon: (
           <svg
@@ -262,56 +261,7 @@ export const menuGroups = [
       },
     ],
   },
-  // {
-  //   name: "SETTINGS & OTHERS",
-  //   menuItems: [
-  //     {
-  //       icon: (
-  //         <svg
-  //           className="fill-current"
-  //           width="24"
-  //           height="24"
-  //           viewBox="0 0 24 24"
-  //           xmlns="http://www.w3.org/2000/svg"
-  //         >
-  //           <path
-  //             d="M12 2C13.11 2 14 2.89 14 4V5H10V4C10 2.89 10.89 2 12 2ZM19 7H5C3.9 7 3 7.9 3 9V20C3 21.11 3.9 22 5 22H19C20.11 22 21 21.11 21 20V9C21 7.9 20.11 7 19 7ZM12 19C10.34 19 9 17.66 9 16C9 14.34 10.34 13 12 13C13.66 13 15 14.34 15 16C15 17.66 13.66 19 12 19Z"
-  //             fill="currentColor"
-  //           />
-  //         </svg>
-  //       ),
-  //       label: "Settings",
-  //       route: "#",
-  //       children: [
-  //         { label: "General", route: "/settings/general" },
-  //         { label: "Payment", route: "/settings/payment" },
-  //         { label: "Shipping", route: "/settings/shipping" },
-  //       ],
-  //     },
-  //     {
-  //       icon: (
-  //         <svg
-  //           className="fill-current"
-  //           width="24"
-  //           height="24"
-  //           viewBox="0 0 24 24"
-  //           xmlns="http://www.w3.org/2000/svg"
-  //         >
-  //           <path
-  //             d="M3 13H21V11H3V13ZM3 6H21V4H3V6ZM3 20H21V18H3V20Z"
-  //             fill="currentColor"
-  //           />
-  //         </svg>
-  //       ),
-  //       label: "Reports",
-  //       route: "#",
-  //       children: [
-  //         { label: "Sales Report", route: "/reports/sales" },
-  //         { label: "Inventory Report", route: "/reports/inventory" },
-  //       ],
-  //     },
-  //   ],
-  // },
+
 ];
 
 
