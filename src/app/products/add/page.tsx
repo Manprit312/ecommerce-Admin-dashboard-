@@ -416,6 +416,7 @@ const total = [...files, ...imageFiles, ...modelFiles];
     name="offer"
     placeholder="e.g. Buy 1 Get 1 Free, 20% Off, Flat ₹500 Off"
     value={form.offer}
+       maxLength={50}
     onChange={handleChange}
     className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
   />

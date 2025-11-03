@@ -553,6 +553,7 @@ formData.append("offer", form.offer || "");
             <label className="block text-sm font-medium text-gray-700 mb-1">Offer</label>
             <input
               name="offer"
+              maxLength={50}
               placeholder="e.g. Buy 1 Get 1 Free, 20% Off, Flat ₹500 Off"
               value={form.offer}
               onChange={handleChange}
