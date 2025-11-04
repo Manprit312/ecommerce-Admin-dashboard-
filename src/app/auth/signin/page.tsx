@@ -15,6 +15,7 @@ const SignInAdmin: React.FC = () => {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -99,17 +100,68 @@ const SignInAdmin: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <label className="block text-gray-700 mb-1 text-sm font-medium">
-                    Password
-                  </label>
-                  <input
-                    name="password"
-                    type="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    className="w-full border rounded-xl px-4 py-3 bg-white/60 focus:ring-2 focus:ring-[#1daa61] outline-none transition-all"
-                    placeholder="Enter password"
-                  />
+                 <label className="block text-gray-700 mb-1 text-sm font-medium">
+  Password
+</label>
+
+<div className="relative">
+  <input
+    name="password"
+    type={showPassword ? "text" : "password"}
+    value={form.password}
+    onChange={handleChange}
+    className="w-full border rounded-xl px-4 py-3 bg-white/60 focus:ring-2 focus:ring-[#1daa61] outline-none transition-all pr-11"
+    placeholder="Enter password"
+  />
+
+  {/* 👁️ Eye toggle button */}
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#1daa61] transition-all flex items-center justify-center"
+  >
+    {showPassword ? (
+      // 👁️ Eye open icon
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.8}
+        stroke="currentColor"
+        className="w-5 h-5"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+        />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+        />
+      </svg>
+    ) : (
+      // 🙈 Eye off icon
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.8}
+        stroke="currentColor"
+        className="w-5 h-5"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M3 3l18 18M10.73 5.08A9.957 9.957 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.21 4.882M6.219 6.219A9.956 9.956 0 002.458 12c1.274 4.057 5.064 7 9.542 7 1.364 0 2.676-.27 3.869-.76M9.88 9.88A3 3 0 0114.12 14.12"
+        />
+      </svg>
+    )}
+  </button>
+</div>
+
+
                 </motion.div>
 
                 <motion.button
@@ -117,8 +169,8 @@ const SignInAdmin: React.FC = () => {
                   type="submit"
                   disabled={loading}
                   className={`w-full py-3 rounded-xl text-white font-semibold text-lg shadow-md transition-all duration-300 ${loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-[#1daa61] hover:bg-[#18b066] hover:shadow-lg"
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#1daa61] hover:bg-[#18b066] hover:shadow-lg"
                     }`}
                 >
                   {loading ? "Signing in..." : "Sign In"}

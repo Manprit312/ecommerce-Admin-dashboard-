@@ -107,6 +107,9 @@ export default function CategoriesPage() {
     setPreview(cat.image);
     setEditingId(cat._id);
     setShowForm(true);
+    setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, 50);
   };
 
   const handleDelete = async (id: string) => {

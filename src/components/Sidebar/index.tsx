@@ -109,7 +109,7 @@ export const menuGroups = [
         route: "#",
         children: [
           { label: "All Products", route: "/products" },
-          { label: "Add Product", route: "/products/add" },
+          // { label: "Add Product", route: "/products/add" },
           // { label: "Categories", route: "/products/categories" },
           // { label: "Inventory", route: "/products/inventory" },
         ],
