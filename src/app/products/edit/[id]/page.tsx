@@ -255,7 +255,7 @@ export default function EditProductPage() {
     formData.append("badge", form.badge);
     formData.append("existingImages", JSON.stringify(form.images));
     formData.append("stockQuantity", String(form.stockQuantity));
-formData.append("offer", form.offer || "");
+    formData.append("offer", form.offer || "");
     newImages.forEach((file) => formData.append("files", file));
     if (newModel) formData.append("files", newModel);
     if (form.removeModel) formData.append("removeModel", "true");
@@ -563,7 +563,19 @@ formData.append("offer", form.offer || "");
               Add any promotional offer or discount for this product.
             </p>
           </div>
+          <div className="flex gap-2">
+            <input
+  name="badge"
+  value={form.badge || ""}
+  onChange={(e) => setForm((prev) => ({ ...prev, badge: e.target.value }))}
+  maxLength={20}
+  placeholder="Custom badge (e.g., Limited Edition)"
+  className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
+/>
 
+         
+
+          </div>
           {/* In Stock */}
           <div className="flex items-center gap-2">
             <input

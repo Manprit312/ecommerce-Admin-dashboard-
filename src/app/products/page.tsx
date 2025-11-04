@@ -7,14 +7,19 @@ import { useRouter } from "next/navigation";
 import { Edit, Trash2, PlusCircle, X } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { toast, Toaster } from "react-hot-toast";
+
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 
 export default function AllProductsPage() {
   useEffect(() => {
-  if (typeof window !== "undefined") {
-    import("@google/model-viewer");
-  }
-}, []);
+    if (typeof window !== "undefined") {
+      import("@google/model-viewer");
+    }
+  }, []);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const [products, setProducts] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
@@ -40,10 +45,45 @@ export default function AllProductsPage() {
       setLoading(false);
     }
   }
+  async function fetchCategories() {
+    try {
+      const res = await fetch(`${apiUrl}categories`);
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      const data = await res.json();
+      setCategories(data);
+    } catch (err) {
+      toast.error("❌ Failed to load categories");
+    }
+  }
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
+  useEffect(() => {
+    let updated = [...products];
+
+    // 🔍 search filter
+    if (search.trim()) {
+      updated = updated.filter((p) =>
+        p.name?.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    // 🏷️ category filter
+    if (selectedCategory) {
+      updated = updated.filter((p) =>
+        p.categories?.some(
+          (c: any) =>
+            (typeof c === "string" && c === selectedCategory) ||
+            (typeof c === "object" && c._id === selectedCategory)
+        )
+      );
+    }
+
+    setFiltered(updated);
+  }, [search, selectedCategory, products]);
+
 
   useEffect(() => {
     if (!search.trim()) {
@@ -58,29 +98,32 @@ export default function AllProductsPage() {
   }, [search, products]);
 
   // 🔹 Confirm delete popup action
-  const handleConfirmDelete = async () => {
-    if (!deletePopup) return;
+const handleConfirmDelete = async () => {
+  try {
+    toast.loading("Deleting...", { id: "delete-toast" });
 
-    try {
-      toast.loading("Deleting product...", { id: "delete-toast" });
+    if (deletePopup === "bulk") {
+      await Promise.all(
+        selectedProducts.map((id) =>
+          fetch(`${apiUrl}products/${id}`, { method: "DELETE" })
+        )
+      );
 
-      const res = await fetch(`${apiUrl}products/${deletePopup}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Failed to delete");
-      }
-
-      toast.success("✅ Product deleted successfully!", { id: "delete-toast" });
-      setDeletePopup(null);
-      fetchProducts();
-    } catch (err: any) {
-      toast.error("❌ " + err.message, { id: "delete-toast" });
-      setDeletePopup(null);
+      toast.success("✅ Selected products deleted!", { id: "delete-toast" });
+      setSelectedProducts([]);
+    } else {
+      await fetch(`${apiUrl}products/${deletePopup}`, { method: "DELETE" });
+      toast.success("✅ Product deleted!", { id: "delete-toast" });
     }
-  };
+
+    setDeletePopup(null);
+    fetchProducts();
+  } catch (err: any) {
+    toast.error("❌ " + err.message, { id: "delete-toast" });
+    setDeletePopup(null);
+  }
+};
+
 
   return (
     <DefaultLayout>
@@ -99,7 +142,7 @@ export default function AllProductsPage() {
         </div>
 
         {/* Search */}
-        <div className="relative mb-6">
+        <div className="relative mb-6 gap-20 flex justify-center sm:justify-start flex-wrap sm:flex-nowrap items-center gap-y-4">
           <input
             type="text"
             placeholder="Search products..."
@@ -107,7 +150,33 @@ export default function AllProductsPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="w-full sm:w-96 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#1daa61] outline-none"
           />
+         
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#1daa61]"
+            >
+              <option value="">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+      
+
         </div>
+{selectedProducts.length > 0 && (
+  <div className="mb-4 flex justify-end">
+    <button
+      onClick={() => setDeletePopup("bulk")}
+      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+    >
+      Delete Selected ({selectedProducts.length})
+    </button>
+  </div>
+)}
 
         {/* Loading / Error */}
         {loading && (
@@ -125,17 +194,32 @@ export default function AllProductsPage() {
         {!loading && !error && (
           <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
             <table className="min-w-full text-left text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 font-medium text-gray-500">Product</th>
-                  <th className="px-6 py-3 font-medium text-gray-500">Price</th>
-                  <th className="px-6 py-3 font-medium text-gray-500">Stock</th>
-                  <th className="px-6 py-3 font-medium text-gray-500">Status</th>
-                  <th className="px-6 py-3 text-right font-medium text-gray-500">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+            <thead className="bg-gray-50">
+  <tr>
+    <th className="px-4 py-3">
+      <input
+        type="checkbox"
+        checked={selectedProducts.length === filtered.length && filtered.length > 0}
+        onChange={(e) => {
+          if (e.target.checked) {
+            setSelectedProducts(filtered.map((p) => p._id));
+          } else {
+            setSelectedProducts([]);
+          }
+        }}
+      />
+    </th>
+
+    <th className="px-6 py-3 font-medium text-gray-500">Product</th>
+    <th className="px-6 py-3 font-medium text-gray-500">Price</th>
+    <th className="px-6 py-3 font-medium text-gray-500">Stock</th>
+    <th className="px-6 py-3 font-medium text-gray-500">Status</th>
+    <th className="px-6 py-3 text-right font-medium text-gray-500">
+      Actions
+    </th>
+  </tr>
+</thead>
+
 
               <tbody>
                 {filtered.length > 0 ? (
@@ -145,6 +229,21 @@ export default function AllProductsPage() {
                       onClick={() => router.push(`/products/edit/${product._id}`)}
                       className="border-t hover:bg-gray-50 cursor-pointer transition"
                     >
+                      <td className="px-4 py-4">
+          <input
+            type="checkbox"
+            checked={selectedProducts.includes(product._id)}
+            onChange={(e) => {
+              e.stopPropagation();
+              setSelectedProducts((prev) =>
+                prev.includes(product._id)
+                  ? prev.filter((id) => id !== product._id)
+                  : [...prev, product._id]
+              );
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </td>
                       <td className="px-6 py-4 flex items-center gap-3">
                         {(() => {
 
@@ -215,12 +314,12 @@ export default function AllProductsPage() {
 
                       <td className="px-6 py-4">
                         <span
-                          className={`px-2 py-1 text-xs font-semibold rounded-full ${product.status === "Active"
+                          className={`px-2 py-1 text-xs font-semibold rounded-full ${product.inStock 
                             ? "bg-green-100 text-green-700"
                             : "bg-red-100 text-red-600"
                             }`}
                         >
-                          {product.status || "Inactive"}
+                          {product.inStock ? "In Stock" : "Out of Stock"}
                         </span>
                       </td>
 

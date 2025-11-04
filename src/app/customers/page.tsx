@@ -9,10 +9,12 @@ import toast from "react-hot-toast";
 export default function CustomersPage() {
   const [customers, setCustomers] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
   async function fetchCustomers() {
     try {
       setLoading(true);
@@ -27,6 +29,29 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
       setLoading(false);
     }
   }
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedUsers.length} selected customers?`)) return;
+
+    try {
+      toast.loading("Deleting selected customers...", { id: "bulk" });
+
+      await Promise.all(
+        selectedUsers.map((id) =>
+          fetch(`${apiUrl}users/${id}`, {
+            method: "DELETE",
+          })
+        )
+      );
+
+      toast.success("✅ Selected customers deleted!", { id: "bulk" });
+      setSelectedUsers([]);
+
+      // Refresh UI
+      fetchCustomers();
+    } catch {
+      toast.error("❌ Failed to delete selected users", { id: "bulk" });
+    }
+  };
 
   useEffect(() => {
     fetchCustomers();
@@ -106,6 +131,16 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
           />
           <Search className="absolute right-3 top-2.5 text-gray-400 w-5 h-5" />
         </div>
+        {selectedUsers.length > 0 && (
+          <div className="flex justify-end mb-3">
+            <button
+              onClick={handleBulkDelete}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+            >
+              Delete Selected ({selectedUsers.length})
+            </button>
+          </div>
+        )}
 
         {/* Loading */}
         {loading && (
@@ -125,6 +160,20 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
             <table className="min-w-full text-left text-sm">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.length === filtered.length && filtered.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedUsers(filtered.map((u) => u._id));
+                        } else {
+                          setSelectedUsers([]);
+                        }
+                      }}
+                    />
+                  </th>
+
                   <th className="px-6 py-3 font-medium text-gray-500">Customer</th>
                   <th className="px-6 py-3 font-medium text-gray-500">Email</th>
                   <th className="px-6 py-3 font-medium text-gray-500">Login Count</th>
@@ -134,6 +183,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
                 </tr>
               </thead>
 
+
               <tbody>
                 {filtered.length > 0 ? (
                   filtered.map((user) => (
@@ -141,6 +191,19 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
                       key={user._id}
                       className="border-t hover:bg-gray-50 transition"
                     >
+                      <td className="px-4 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(user._id)}
+                          onChange={() => {
+                            setSelectedUsers((prev) =>
+                              prev.includes(user._id)
+                                ? prev.filter((id) => id !== user._id)
+                                : [...prev, user._id]
+                            );
+                          }}
+                        />
+                      </td>
                       <td className="px-6 py-4 flex items-center gap-3">
                         <Image
                           src={

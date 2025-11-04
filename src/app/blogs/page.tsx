@@ -13,6 +13,8 @@ import "react-quill/dist/quill.snow.css";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
+  const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
+
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -62,6 +64,25 @@ export default function AdminBlogsPage() {
     setFile(null);
     setPreview(null);
   };
+const handleBulkDelete = async () => {
+  if (!confirm(`Delete ${selectedBlogs.length} selected blogs?`)) return;
+
+  toast.loading("Deleting selected blogs...", { id: "bulk" });
+
+  try {
+    await Promise.all(
+      selectedBlogs.map((id) =>
+        fetch(`${apiUrl}blogs/${id}`, { method: "DELETE" })
+      )
+    );
+
+    toast.success("✅ Selected blogs deleted!", { id: "bulk" });
+    setSelectedBlogs([]);
+    fetchBlogs();
+  } catch (err) {
+    toast.error("Failed to delete blogs", { id: "bulk" });
+  }
+};
 
   // ✅ Handle save / update
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,6 +156,7 @@ export default function AdminBlogsPage() {
     <DefaultLayout>
       <div className="flex flex-col gap-6">
         {/* Header */}
+
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-semibold text-gray-900">Blogs</h1>
           <button
@@ -145,6 +167,16 @@ export default function AdminBlogsPage() {
             {showForm ? "Close Form" : "Add Blog"}
           </button>
         </div>
+{selectedBlogs.length > 0 && (
+  <div className="flex justify-end">
+    <button
+      onClick={handleBulkDelete}
+      className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg mb-3"
+    >
+      Delete Selected ({selectedBlogs.length})
+    </button>
+  </div>
+)}
 
         {/* Loader */}
         {loading ? (
@@ -243,20 +275,49 @@ export default function AdminBlogsPage() {
             {/* Blogs Table */}
             <div className="overflow-x-auto border border-gray-200 rounded-xl bg-white shadow-sm">
               <table className="min-w-full text-sm text-left">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 font-medium text-gray-500">Image</th>
-                    <th className="px-6 py-3 font-medium text-gray-500">Title</th>
-                    <th className="px-6 py-3 font-medium text-gray-500">Status</th>
-                    <th className="px-6 py-3 font-medium text-gray-500">Author</th>
-                    <th className="px-6 py-3 font-medium text-gray-500">Created</th>
-                    <th className="px-6 py-3 text-right font-medium text-gray-500">Actions</th>
-                  </tr>
-                </thead>
+               <thead className="bg-gray-50">
+  <tr>
+    <th className="px-4 py-3">
+      <input
+        type="checkbox"
+        checked={selectedBlogs.length === blogs.length && blogs.length > 0}
+        onChange={(e) => {
+          if (e.target.checked) {
+            setSelectedBlogs(blogs.map((b) => b._id));
+          } else {
+            setSelectedBlogs([]);
+          }
+        }}
+      />
+    </th>
+
+    <th className="px-6 py-3 font-medium text-gray-500">Image</th>
+    <th className="px-6 py-3 font-medium text-gray-500">Title</th>
+    <th className="px-6 py-3 font-medium text-gray-500">Status</th>
+    <th className="px-6 py-3 font-medium text-gray-500">Author</th>
+    <th className="px-6 py-3 font-medium text-gray-500">Created</th>
+    <th className="px-6 py-3 text-right font-medium text-gray-500">Actions</th>
+  </tr>
+</thead>
+
                 <tbody>
                   {blogs.length > 0 ? (
                     blogs.map((b) => (
                       <tr key={b._id} className="border-t hover:bg-gray-50">
+                        <td className="px-4 py-3">
+          <input
+            type="checkbox"
+            checked={selectedBlogs.includes(b._id)}
+            onChange={(e) => {
+              e.stopPropagation();
+              setSelectedBlogs((prev) =>
+                prev.includes(b._id)
+                  ? prev.filter((id) => id !== b._id)
+                  : [...prev, b._id]
+              );
+            }}
+          />
+        </td>
                         <td className="px-6 py-3">
                           <img
                             src={b.image}

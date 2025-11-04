@@ -9,6 +9,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function InquiriesPage() {
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedInquiries, setSelectedInquiries] = useState<string[]>([]);
 
   const fetchInquiries = async () => {
     try {
@@ -26,6 +27,25 @@ export default function InquiriesPage() {
   useEffect(() => {
     fetchInquiries();
   }, []);
+  const bulkDeleteInquiries = async () => {
+    if (!confirm(`Delete ${selectedInquiries.length} inquiries?`)) return;
+
+    try {
+      toast.loading("Deleting selected inquiries...", { id: "bulk-delete" });
+
+      await Promise.all(
+        selectedInquiries.map((id) =>
+          fetch(`${apiUrl}inquiries/${id}`, { method: "DELETE" })
+        )
+      );
+
+      toast.success("✅ Selected inquiries deleted", { id: "bulk-delete" });
+      setSelectedInquiries([]);
+      fetchInquiries();
+    } catch {
+      toast.error("Failed to delete!", { id: "bulk-delete" });
+    }
+  };
 
   const updateStatus = async (id: string, newStatus: string) => {
     try {
@@ -62,7 +82,16 @@ export default function InquiriesPage() {
             <RefreshCw className="w-4 h-4" /> Refresh
           </button>
         </div>
-
+        {selectedInquiries.length > 0 && (
+          <div className="flex justify-end mb-3">
+            <button
+              onClick={() => bulkDeleteInquiries()}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg"
+            >
+              Delete Selected ({selectedInquiries.length})
+            </button>
+          </div>
+        )}
         {loading ? (
           <div className="text-center text-gray-500 py-10">Loading inquiries...</div>
         ) : (
@@ -70,6 +99,20 @@ export default function InquiriesPage() {
             <table className="min-w-full text-left text-sm">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedInquiries.length === inquiries.length && inquiries.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedInquiries(inquiries.map((inq) => inq._id));
+                        } else {
+                          setSelectedInquiries([]);
+                        }
+                      }}
+                    />
+                  </th>
+
                   <th className="px-6 py-3 font-medium text-gray-500">Name</th>
                   <th className="px-6 py-3 font-medium text-gray-500">Email</th>
                   <th className="px-6 py-3 font-medium text-gray-500">Message</th>
@@ -87,6 +130,20 @@ export default function InquiriesPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                     >
+                      <td className="px-4 py-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedInquiries.includes(inq._id)}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            setSelectedInquiries((prev) =>
+                              prev.includes(inq._id)
+                                ? prev.filter((id) => id !== inq._id)
+                                : [...prev, inq._id]
+                            );
+                          }}
+                        />
+                      </td>
                       <td className="px-6 py-4 font-medium text-gray-900">{inq.name}</td>
                       <td className="px-6 py-4 text-gray-700 flex items-center gap-2">
                         <Mail className="w-4 h-4 text-gray-400" />
@@ -99,13 +156,12 @@ export default function InquiriesPage() {
                         <select
                           value={inq.status}
                           onChange={(e) => updateStatus(inq._id, e.target.value)}
-                          className={`border rounded-lg px-2 py-1 text-sm ${
-                            inq.status === "New"
+                          className={`border rounded-lg px-2 py-1 text-sm ${inq.status === "New"
                               ? "border-[#1daa61] text-[#1daa61]"
                               : inq.status === "Read"
-                              ? "border-yellow-500 text-yellow-600"
-                              : "border-blue-500 text-blue-600"
-                          }`}
+                                ? "border-yellow-500 text-yellow-600"
+                                : "border-blue-500 text-blue-600"
+                            }`}
                         >
                           <option>New</option>
                           <option>Read</option>

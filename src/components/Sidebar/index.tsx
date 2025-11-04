@@ -261,6 +261,30 @@ export const menuGroups = [
       },
     ],
   },
+  {
+  name: "Contact-Settings",
+  menuItems: [
+    {
+      icon: (
+        <svg
+          className="fill-current"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M21 10.5C21 5.52944 16.9706 1.5 12 1.5C7.02944 1.5 3 5.52944 3 10.5C3 15.0823 6.37841 18.8772 10.75 19.4084V22.5H13.25V19.4084C17.6216 18.8772 21 15.0823 21 10.5ZM12 17C8.41015 17 5.5 14.0899 5.5 10.5C5.5 6.91015 8.41015 4 12 4C15.5899 4 18.5 6.91015 18.5 10.5C18.5 14.0899 15.5899 17 12 17ZM11 7H13V12H11V7ZM11 14H13V16H11V14Z"
+            fill="currentColor"
+          />
+        </svg>
+      ),
+      label: "Contact Settings",
+      route: "/contact",
+    },
+  ],
+},
+
 
 ];
 

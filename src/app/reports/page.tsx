@@ -10,18 +10,38 @@ export default function ReportsPage() {
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchReport = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${apiUrl}reports`);
-      const data = await res.json();
-      setReport(data);
-    } catch (err) {
-      toast.error("Failed to load report");
-    } finally {
-      setLoading(false);
-    }
-  };
+  
+const fetchReport = async () => {
+  try {
+    setLoading(true);
+
+    // Call APIs in parallel to reduce load time
+    const [productsRes, customersRes, inquiriesRes] = await Promise.all([
+      fetch(`${apiUrl}products`),
+      fetch(`${apiUrl}users`),
+      fetch(`${apiUrl}inquiries`),
+    ]);
+
+    const products = await productsRes.json();
+    const customers = await customersRes.json();
+    const inquiries = await inquiriesRes.json();
+
+    // Calculate report values from lengths
+    const reportData = {
+      totalProducts: products.length,
+      totalCustomers: customers.length,
+      inquiriesReceived: inquiries.length,
+      // If needed, other stats here
+    };
+
+    setReport(reportData);
+
+  } catch (err) {
+    toast.error("Failed to load report");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchReport();
@@ -46,9 +66,9 @@ export default function ReportsPage() {
     );
 
   const chartData = [
-    { name: "Delivered", value: report.deliveredOrders },
-    { name: "Pending", value: report.pendingOrders },
-    { name: "Cancelled", value: report.cancelledOrders },
+    { name: "Products", value: report.totalProducts },
+    { name: "Customers", value: report.totalCustomers },
+    { name: "Inquiries", value: report.inquiriesReceived },
   ];
 
   return (
@@ -60,33 +80,33 @@ export default function ReportsPage() {
 
         {/* Summary Cards */}
         <div className="grid md:grid-cols-4 gap-6">
-          <div className="p-5 bg-white border rounded-xl shadow-sm flex flex-col justify-between">
+          {/* <div className="p-5 bg-white border rounded-xl shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <h2 className="text-gray-600 text-sm">Total Revenue</h2>
+              <h2 className="text-gray-600 text-sm">Total Inquiries</h2>
               <TrendingUp className="text-[#1daa61]" />
             </div>
             <p className="text-2xl font-bold text-gray-800 mt-2">
-              ₹{report.totalRevenue.toLocaleString()}
+              ₹{report.inquiriesReceived.toLocaleString()}
             </p>
-          </div>
+          </div> */}
 
           <div className="p-5 bg-white border rounded-xl shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <h2 className="text-gray-600 text-sm">Total Orders</h2>
+              <h2 className="text-gray-600 text-sm">Total Products</h2>
               <Package className="text-[#1daa61]" />
             </div>
             <p className="text-2xl font-bold text-gray-800 mt-2">
-              {report.totalOrders}
+              {report.totalProducts}
             </p>
           </div>
 
           <div className="p-5 bg-white border rounded-xl shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <h2 className="text-gray-600 text-sm">New Customers</h2>
+              <h2 className="text-gray-600 text-sm">Total Customers</h2>
               <Users className="text-[#1daa61]" />
             </div>
             <p className="text-2xl font-bold text-gray-800 mt-2">
-              {report.newCustomers}
+              {report.totalCustomers}
             </p>
           </div>
 
