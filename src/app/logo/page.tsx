@@ -14,7 +14,7 @@ export default function LogoUploadPage() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const [description, setDescription] = useState("");
   // ✅ Fetch existing logo from backend
   useEffect(() => {
     const fetchLogo = async () => {
@@ -22,14 +22,17 @@ export default function LogoUploadPage() {
         const res = await fetch(`${apiUrl}logo`);
         if (!res.ok) throw new Error("Failed to fetch logo");
         const data = await res.json();
+
         if (data?.logoUrl) {
           setPreview(data.logoUrl);
           setUploadedUrl(data.logoUrl);
         }
+        if (data?.description) setDescription(data.description); // ✅ load description
       } catch (err) {
         console.error("Failed to fetch logo:", err);
       }
     };
+
     fetchLogo();
   }, []);
 
@@ -72,14 +75,16 @@ export default function LogoUploadPage() {
   };
 
   const handleUpload = async () => {
-    if (!logoFile) {
-      toast.error("Please select a logo first");
+    if (!logoFile && description.trim() === "") {
+      toast.error("No update to perform.");
       return;
     }
 
     setUploading(true);
     const formData = new FormData();
-    formData.append("file", logoFile);
+
+    if (logoFile) formData.append("file", logoFile);  // ✅ only if new file
+    formData.append("description", description);       // ✅ always send description
 
     try {
       const res = await fetch(`${apiUrl}logo/upload`, {
@@ -91,7 +96,7 @@ export default function LogoUploadPage() {
 
       if (!res.ok) throw new Error(data.message || "Upload failed");
 
-      toast.success(" Logo uploaded successfully!");
+      toast.success("Logo updated!");
       setUploadedUrl(data.logoUrl);
       setPreview(data.logoUrl);
       setProgress(100);
@@ -174,19 +179,28 @@ export default function LogoUploadPage() {
               )}
             </div>
           )}
-
+          <div className="mt-6">
+            <label className="text-gray-700 font-medium">Footer Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter footer tagline / description..."
+              className="w-full mt-2 p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#1daa61] outline-none"
+              rows={3}
+            />
+          </div>
           {/* Upload Button */}
           <div className="mt-10">
             <button
               onClick={handleUpload}
-              disabled={uploading || !logoFile}
-              className={`w-full py-3 rounded-xl text-white font-semibold text-lg flex items-center justify-center gap-2 transition-all ${
-                uploading
+              disabled={uploading || (!logoFile && description.trim() === "")}
+
+              className={`w-full py-3 rounded-xl text-white font-semibold text-lg flex items-center justify-center gap-2 transition-all ${uploading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-gradient-to-r from-[#1daa61] to-[#15b96b] hover:shadow-[0_8px_20px_rgba(29,170,97,0.3)] hover:scale-[1.02]"
-              }`}
+                }`}
             >
-              {uploading ? "Uploading..." : "Upload Logo"}
+              {uploading ? "Updating..." : "Update Logo & Description"}
             </button>
 
             {/* Progress Bar */}

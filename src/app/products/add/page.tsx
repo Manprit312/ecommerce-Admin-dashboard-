@@ -10,10 +10,10 @@ import { toast, Toaster } from "react-hot-toast";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 export default function AddProductPage() {
   useEffect(() => {
-  if (typeof window !== "undefined") {
-    import("@google/model-viewer");
-  }
-}, []);
+    if (typeof window !== "undefined") {
+      import("@google/model-viewer");
+    }
+  }, []);
 
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
@@ -22,6 +22,9 @@ export default function AddProductPage() {
   const [form, setForm] = useState({
     name: "",
     stockQuantity: "",
+    shipping: "Free Shipping",
+    returnPolicy: "Easy Returns",
+    warranty: "1 Year Warranty",
 
     price: "",
     description: "",
@@ -105,27 +108,27 @@ export default function AddProductPage() {
   };
 
 
-const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const newFiles = e.target.files ? Array.from(e.target.files) : [];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFiles = e.target.files ? Array.from(e.target.files) : [];
 
-  // Separate image files and 3D models
-  const imageFiles = newFiles.filter((f) => f.type.startsWith("image/"));
-  const modelFiles = newFiles.filter(
-    (f) =>
-      f.name.toLowerCase().endsWith(".glb") ||
-      f.name.toLowerCase().endsWith(".gltf")
-  );
+    // Separate image files and 3D models
+    const imageFiles = newFiles.filter((f) => f.type.startsWith("image/"));
+    const modelFiles = newFiles.filter(
+      (f) =>
+        f.name.toLowerCase().endsWith(".glb") ||
+        f.name.toLowerCase().endsWith(".gltf")
+    );
 
 
-const total = [...files, ...imageFiles, ...modelFiles];
+    const total = [...files, ...imageFiles, ...modelFiles];
 
-  if (total.length > 50) {
-    toast.error("❌ You can upload up to 50 files only!");
-    return;
-  }
+    if (total.length > 50) {
+      toast.error("❌ You can upload up to 50 files only!");
+      return;
+    }
 
-  setFiles(total);
-};
+    setFiles(total);
+  };
 
 
   const removeFile = (index: number) => {
@@ -315,6 +318,55 @@ const total = [...files, ...imageFiles, ...modelFiles];
               <Plus className="w-4 h-4 mr-1" /> Add Feature
             </button>
           </div>
+          {/* ✅ Shipping / Return / Warranty */}
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Charge</label>
+              <select
+                name="shipping"
+                value={form.shipping}
+                onChange={handleChange}
+                className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+              >
+                <option value="Free Shipping">Free Shipping</option>
+                <option value="₹49">₹49</option>
+                <option value="₹99">₹99</option>
+                <option value="₹149">₹149</option>
+                <option value="Custom">Custom</option>
+              </select>
+
+              {form.shipping === "Custom" && (
+                <input
+                  type="text"
+                  placeholder="Enter custom charge"
+                  onChange={(e) => setForm({ ...form, shipping: e.target.value })}
+                  className="border rounded-lg px-4 py-2 mt-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+                />
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Return Policy</label>
+              <input
+                name="returnPolicy"
+                value={form.returnPolicy}
+                onChange={handleChange}
+                className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+                placeholder="eg. Easy Returns"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Warranty</label>
+              <input
+                name="warranty"
+                value={form.warranty}
+                onChange={handleChange}
+                className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+                placeholder="eg. 1 Year Warranty"
+              />
+            </div>
+          </div>
 
           {/* Image Upload */}
           <div>
@@ -334,8 +386,8 @@ const total = [...files, ...imageFiles, ...modelFiles];
                 {files.map((file, i) => {
                   const is3D =
                     file.name.toLowerCase().endsWith(".glb")
-                    console.log("is3D file:",file.name,is3D);
-      const previewUrl = URL.createObjectURL(file);
+                  console.log("is3D file:", file.name, is3D);
+                  const previewUrl = URL.createObjectURL(file);
 
                   return (
                     <div
@@ -408,22 +460,22 @@ const total = [...files, ...imageFiles, ...modelFiles];
               onChange={handleChange}
               className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
             />
-            
+
           </div>
           <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Offer</label>
-  <input
-    name="offer"
-    placeholder="e.g. Buy 1 Get 1 Free, 20% Off, Flat ₹500 Off"
-    value={form.offer}
-       maxLength={50}
-    onChange={handleChange}
-    className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
-  />
-  <p className="text-xs text-gray-500 mt-1">
-    Add any promotional offer or discount label for this product.
-  </p>
-</div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Offer</label>
+            <input
+              name="offer"
+              placeholder="e.g. Buy 1 Get 1 Free, 20% Off, Flat ₹500 Off"
+              value={form.offer}
+              maxLength={50}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Add any promotional offer or discount label for this product.
+            </p>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Stock Quantity

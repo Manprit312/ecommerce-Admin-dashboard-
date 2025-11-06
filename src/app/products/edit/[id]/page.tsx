@@ -29,7 +29,12 @@ interface ProductForm {
   model3D?: string | null;
   removeModel?: boolean;
   offer?: string;
+  shipping?: string;
+returnPolicy?: string;
+warranty?: string;
+
 }
+
 
 export default function EditProductPage() {
   const router = useRouter();
@@ -49,6 +54,10 @@ export default function EditProductPage() {
     specs: { material: "", dimensions: "", power: "", features: [""] },
     images: [],
     model3D: null,
+    shipping: "Free Shipping",
+returnPolicy: "Easy Returns",
+warranty: "1 Year Warranty",
+
   });
 
 
@@ -95,6 +104,10 @@ export default function EditProductPage() {
           categories: productData.categories?.map((c: any) => c._id || c) || [],
           images: productData.images || [],
           model3D: productData.model3D || null,
+          shipping: productData.shipping || "Free Shipping",
+returnPolicy: productData.returnPolicy || "Easy Returns",
+warranty: productData.warranty || "1 Year Warranty",
+
         });
       } catch (err) {
         toast.error("❌ Failed to load product");
@@ -256,7 +269,12 @@ export default function EditProductPage() {
     formData.append("existingImages", JSON.stringify(form.images));
     formData.append("stockQuantity", String(form.stockQuantity));
     formData.append("offer", form.offer || "");
+    formData.append("shipping", form.shipping || "");
+formData.append("returnPolicy", form.returnPolicy || "");
+formData.append("warranty", form.warranty || "");
+
     newImages.forEach((file) => formData.append("files", file));
+    
     if (newModel) formData.append("files", newModel);
     if (form.removeModel) formData.append("removeModel", "true");
 
@@ -422,6 +440,55 @@ export default function EditProductPage() {
               <Plus className="w-4 h-4 mr-1" /> Add Feature
             </button>
           </div>
+{/* ✅ Shipping / Return / Warranty */}
+<div className="grid sm:grid-cols-3 gap-4">
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Charge</label>
+    <select
+      name="shipping"
+      value={form.shipping}
+      onChange={handleChange}
+      className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+    >
+      <option value="Free Shipping">Free Shipping</option>
+      <option value="₹49">₹49</option>
+      <option value="₹99">₹99</option>
+      <option value="₹149">₹149</option>
+      <option value="Custom">Custom</option>
+    </select>
+
+    {form.shipping === "Custom" && (
+      <input
+        type="text"
+        placeholder="Enter custom charge"
+        onChange={(e) => setForm({ ...form, shipping: e.target.value })}
+        className="border rounded-lg px-4 py-2 mt-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+      />
+    )}
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Return Policy</label>
+    <input
+      name="returnPolicy"
+      value={form.returnPolicy}
+      onChange={handleChange}
+      className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+      placeholder="e.g., Easy Returns"
+    />
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty</label>
+    <input
+      name="warranty"
+      value={form.warranty}
+      onChange={handleChange}
+      className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+      placeholder="e.g., 1 Year Warranty"
+    />
+  </div>
+</div>
 
           {/* Existing Images */}
           <div>
