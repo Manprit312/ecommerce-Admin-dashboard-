@@ -25,7 +25,7 @@ export default function AddProductPage() {
     shipping: "Free Shipping",
     returnPolicy: "Easy Returns",
     warranty: "1 Year Warranty",
-
+    isCustomShipping: false,
     price: "",
     description: "",
     categories: [] as string[], // store selected category IDs
@@ -34,12 +34,9 @@ export default function AddProductPage() {
     badge: "",
     inStock: true,
     offer: "",
-    specs: {
-      material: "",
-      dimensions: "",
-      power: "",
-      features: [""],
-    },
+   specs: [
+    { key: "", value: "" },  // ✅ dynamic rows start here
+  ],
   });
 
   const [images, setImages] = useState<File[]>([]);
@@ -66,7 +63,22 @@ export default function AddProductPage() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
+const handleSpecsPairChange = (index: number, field: "key" | "value", value: string) => {
+  const updatedSpecs = [...form.specs];
+  updatedSpecs[index][field] = value;
+  setForm((prev) => ({ ...prev, specs: updatedSpecs }));
+};const addSpecsPair = () => {
+  setForm((prev) => ({
+    ...prev,
+    specs: [...prev.specs, { key: "", value: "" }],
+  }));
+};
+const removeSpecsPair = (index: number) => {
+  setForm((prev) => ({
+    ...prev,
+    specs: prev.specs.filter((_, i) => i !== index),
+  }));
+};
   const handleSpecsChange = (key: string, value: string) => {
     setForm((prev) => ({
       ...prev,
@@ -74,28 +86,10 @@ export default function AddProductPage() {
     }));
   };
 
-  const handleFeatureChange = (index: number, value: string) => {
-    const features = [...form.specs.features];
-    features[index] = value;
-    setForm((prev) => ({
-      ...prev,
-      specs: { ...prev.specs, features },
-    }));
-  };
+ 
 
-  const addFeature = () =>
-    setForm((prev) => ({
-      ...prev,
-      specs: { ...prev.specs, features: [...prev.specs.features, ""] },
-    }));
 
-  const removeFeature = (index: number) => {
-    const features = form.specs.features.filter((_, i) => i !== index);
-    setForm((prev) => ({
-      ...prev,
-      specs: { ...prev.specs, features },
-    }));
-  };
+
 
   // ✅ Category selection handler
   const handleCategorySelect = (id: string) => {
@@ -164,13 +158,14 @@ export default function AddProductPage() {
     setLoading(true);
     const formData = new FormData();
 
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === "specs" || key === "categories") {
-        formData.append(key, JSON.stringify(value));
-      } else {
-        formData.append(key, value as string);
-      }
-    });
+  Object.entries(form).forEach(([key, value]) => {
+  if (key === "specs" || key === "categories") {
+    formData.append(key, JSON.stringify(value));  // ✅ send specs as array
+  } else {
+    formData.append(key, value as string);
+  }
+});
+
     files.forEach((file) => formData.append("files", file));
 
     // ✅ Append model file separately (if exists)
@@ -271,78 +266,82 @@ export default function AddProductPage() {
           </div>
 
           {/* Specs */}
-          <div>
-            <h3 className="text-lg font-semibold mb-3 text-gray-800">Specifications</h3>
-            <div className="grid sm:grid-cols-3 gap-4 mb-4">
-              <input
-                placeholder="Material"
-                value={form.specs.material}
-                onChange={(e) => handleSpecsChange("material", e.target.value)}
-                className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-              <input
-                placeholder="Dimensions"
-                value={form.specs.dimensions}
-                onChange={(e) => handleSpecsChange("dimensions", e.target.value)}
-                className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-              <input
-                placeholder="Power"
-                value={form.specs.power}
-                onChange={(e) => handleSpecsChange("power", e.target.value)}
-                className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-            </div>
+        {/* ✅ Dynamic Specs (Heading + Value) */}
+<div>
+  <h3 className="text-lg font-semibold mb-3 text-gray-800">Specifications</h3>
 
-            <label className="block text-sm font-medium text-gray-700 mb-1">Features</label>
-            {form.specs.features.map((f, i) => (
-              <div key={i} className="flex gap-3 mb-2">
-                <input
-                  value={f}
-                  onChange={(e) => handleFeatureChange(i, e.target.value)}
-                  placeholder="Feature name"
-                  className="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-                />
-                {i > 0 && (
-                  <button type="button" onClick={() => removeFeature(i)} className="text-red-500">
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addFeature}
-              className="flex items-center text-[#1daa61] font-medium mt-2"
-            >
-              <Plus className="w-4 h-4 mr-1" /> Add Feature
-            </button>
-          </div>
+  {form.specs.map((spec, index) => (
+    <div key={index} className="grid grid-cols-12 gap-4 items-center mb-3">
+      <input
+        placeholder="Specification Name (e.g., Material)"
+        value={spec.key}
+        onChange={(e) => handleSpecsPairChange(index, "key", e.target.value)}
+        className="col-span-5 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+      />
+
+      <input
+        placeholder="Specification Value (e.g., Cotton)"
+        value={spec.value}
+        onChange={(e) => handleSpecsPairChange(index, "value", e.target.value)}
+        className="col-span-5 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+      />
+
+      {index > 0 && (
+        <button
+          type="button"
+          onClick={() => removeSpecsPair(index)}
+          className="col-span-2 text-red-500 hover:text-red-700"
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
+      )}
+    </div>
+  ))}
+
+  <button
+    type="button"
+    onClick={addSpecsPair}
+    className="mt-2 flex items-center gap-2 font-medium text-[#1daa61]"
+  >
+    <Plus className="w-4 h-4" /> Add More Specifications
+  </button>
+</div>
+
           {/* ✅ Shipping / Return / Warranty */}
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Charge</label>
-              <select
-                name="shipping"
-                value={form.shipping}
-                onChange={handleChange}
-                className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
-              >
-                <option value="Free Shipping">Free Shipping</option>
-                <option value="₹49">₹49</option>
-                <option value="₹99">₹99</option>
-                <option value="₹149">₹149</option>
-                <option value="Custom">Custom</option>
-              </select>
+ <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Charge</label>
 
-              {form.shipping === "Custom" && (
-                <input
-                  type="text"
-                  placeholder="Enter custom charge"
-                  onChange={(e) => setForm({ ...form, shipping: e.target.value })}
-                  className="border rounded-lg px-4 py-2 mt-2 w-full focus:ring-2 focus:ring-[#1daa61]"
-                />
-              )}
+<select
+  name="shipping"
+  value={form.isCustomShipping ? "Custom" : form.shipping}
+  onChange={(e) => {
+    if (e.target.value === "Custom") {
+      setForm({ ...form, isCustomShipping: true, shipping: "" }); // ✅ clear input and enable typing
+    } else {
+      setForm({ ...form, isCustomShipping: false, shipping: e.target.value });
+    }
+  }}
+  className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+>
+  <option value="Free Shipping">Free Shipping</option>
+  <option value="₹49">₹49</option>
+  <option value="₹99">₹99</option>
+  <option value="₹149">₹149</option>
+  <option value="Custom">Custom</option>
+</select>
+
+{form.isCustomShipping && (
+  <input
+    type="number"
+    placeholder="Enter custom charge"
+    value={form.shipping}
+    onChange={(e) => setForm({ ...form, shipping: e.target.value })}
+    className="border rounded-lg px-4 py-2 mt-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+  />
+)}
+
+
             </div>
 
             <div>

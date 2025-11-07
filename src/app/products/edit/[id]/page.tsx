@@ -8,10 +8,8 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import toast from "react-hot-toast";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL_ADMIN;
 interface ProductSpecs {
-  material: string;
-  dimensions: string;
-  power: string;
-  features: string[];
+  key: string;
+  value: string;
 }
 
 interface ProductForm {
@@ -24,14 +22,15 @@ interface ProductForm {
   inStock: boolean;
   badge: string;
   stockQuantity: number;
-  specs: ProductSpecs;
+  specs: ProductSpecs[];
   images: string[];
   model3D?: string | null;
   removeModel?: boolean;
   offer?: string;
+  isCustomShipping: boolean;
   shipping?: string;
-returnPolicy?: string;
-warranty?: string;
+  returnPolicy?: string;
+  warranty?: string;
 
 }
 
@@ -46,17 +45,19 @@ export default function EditProductPage() {
     price: "",
     description: "",
     categories: [],
+    isCustomShipping: false,
     rating: "",
     reviews: "",
     inStock: true,
     badge: "",
     stockQuantity: 0,
-    specs: { material: "", dimensions: "", power: "", features: [""] },
+    specs: [{ key: "", value: "" }],
+
     images: [],
     model3D: null,
     shipping: "Free Shipping",
-returnPolicy: "Easy Returns",
-warranty: "1 Year Warranty",
+    returnPolicy: "Easy Returns",
+    warranty: "1 Year Warranty",
 
   });
 
@@ -71,7 +72,7 @@ warranty: "1 Year Warranty",
       import("@google/model-viewer");
     }
   }, []);
-
+  const predefinedShipping = ["Free Shipping", "₹49", "₹99", "₹149"];
   // ✅ Fetch product + categories
   useEffect(() => {
     async function fetchData() {
@@ -93,20 +94,21 @@ warranty: "1 Year Warranty",
           ...productData,
           stockQuantity: productData.stockQuantity || 0,
 
-          specs: {
-            material: productData.specs?.material || "",
-            dimensions: productData.specs?.dimensions || "",
-            power: productData.specs?.power || "",
-            features: productData.specs?.features?.length
-              ? productData.specs.features
-              : [""],
-          },
+          specs:
+            Array.isArray(productData.specs)
+              ? productData.specs
+              : Object.entries(productData.specs || {}).map(([key, value]) => ({
+                key,
+                value,
+              })),
+
           categories: productData.categories?.map((c: any) => c._id || c) || [],
           images: productData.images || [],
           model3D: productData.model3D || null,
           shipping: productData.shipping || "Free Shipping",
-returnPolicy: productData.returnPolicy || "Easy Returns",
-warranty: productData.warranty || "1 Year Warranty",
+          returnPolicy: productData.returnPolicy || "Easy Returns",
+          isCustomShipping: !predefinedShipping.includes(productData.shipping),
+          warranty: productData.warranty || "1 Year Warranty",
 
         });
       } catch (err) {
@@ -125,35 +127,28 @@ warranty: productData.warranty || "1 Year Warranty",
     setForm((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  const handleSpecsChange = (key: string, value: string) => {
-    setForm((prev: any) => ({
-      ...prev,
-      specs: { ...prev.specs, [key]: value },
-    }));
-  };
+  const handleSpecsChange = (index: number, field: "key" | "value", value: string) => {
+  const updated = [...form.specs];
+  updated[index][field] = value;
+  setForm((prev) => ({ ...prev, specs: updated }));
+};
 
-  const handleFeatureChange = (index: number, value: string) => {
-    const features = [...form.specs.features];
-    features[index] = value;
-    setForm((prev: any) => ({
-      ...prev,
-      specs: { ...prev.specs, features },
-    }));
-  };
+const addSpecs = () => {
+  setForm((prev) => ({
+    ...prev,
+    specs: [...prev.specs, { key: "", value: "" }],
+  }));
+};
 
-  const addFeature = () =>
-    setForm((prev: any) => ({
-      ...prev,
-      specs: { ...prev.specs, features: [...prev.specs.features, ""] },
-    }));
+const removeSpecs = (index: number) => {
+  setForm((prev) => ({
+    ...prev,
+    specs: prev.specs.filter((_, i) => i !== index),
+  }));
+};
 
-  const removeFeature = (index: number) => {
-    const features = form.specs.features.filter((_: any, i: number) => i !== index);
-    setForm((prev: any) => ({
-      ...prev,
-      specs: { ...prev.specs, features },
-    }));
-  };
+
+  
 
   // ✅ Category selector (pill toggle)
   const handleCategorySelect = (id: string) => {
@@ -270,11 +265,11 @@ warranty: productData.warranty || "1 Year Warranty",
     formData.append("stockQuantity", String(form.stockQuantity));
     formData.append("offer", form.offer || "");
     formData.append("shipping", form.shipping || "");
-formData.append("returnPolicy", form.returnPolicy || "");
-formData.append("warranty", form.warranty || "");
+    formData.append("returnPolicy", form.returnPolicy || "");
+    formData.append("warranty", form.warranty || "");
 
     newImages.forEach((file) => formData.append("files", file));
-    
+
     if (newModel) formData.append("files", newModel);
     if (form.removeModel) formData.append("removeModel", "true");
 
@@ -383,49 +378,28 @@ formData.append("warranty", form.warranty || "");
               )}
             </div>
           </div>
+          {/* ✅ Dynamic Specifications */}
           <div>
             <h3 className="text-lg font-semibold mb-3 text-gray-800">Specifications</h3>
 
-            <div className="grid sm:grid-cols-3 gap-4 mb-4">
-              <input
-                placeholder="Material"
-                value={form.specs.material}
-                onChange={(e) => handleSpecsChange("material", e.target.value)}
-                className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-              <input
-                placeholder="Dimensions"
-                value={form.specs.dimensions}
-                onChange={(e) => handleSpecsChange("dimensions", e.target.value)}
-                className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-              <input
-                placeholder="Power"
-                value={form.specs.power}
-                onChange={(e) => handleSpecsChange("power", e.target.value)}
-                className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
-              />
-            </div>
-
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Features (e.g., “Lightweight”, “Durable”)
-            </label>
-
-            {(form.specs.features || []).map((f: string, i: number) => (
-
-              <div key={i} className="flex gap-3 mb-2">
+            {form.specs.map((spec, index) => (
+              <div key={index} className="grid grid-cols-12 gap-3 mb-2 items-center">
                 <input
-                  value={f}
-                  onChange={(e) => handleFeatureChange(i, e.target.value)}
-                  placeholder="Feature name"
-                  className="flex-1 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+                  placeholder="Heading (e.g., Material)"
+                  value={spec.key}
+                  onChange={(e) => handleSpecsChange(index, "key", e.target.value)}
+                  className="col-span-5 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
                 />
-                {i > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(i)}
-                    className="text-red-500"
-                  >
+
+                <input
+                  placeholder="Value (e.g., Cotton)"
+                  value={spec.value}
+                  onChange={(e) => handleSpecsChange(index, "value", e.target.value)}
+                  className="col-span-5 border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61]"
+                />
+
+                {index > 0 && (
+                  <button type="button" onClick={() => removeSpecs(index)} className="text-red-500">
                     <Trash2 className="w-5 h-5" />
                   </button>
                 )}
@@ -434,61 +408,71 @@ formData.append("warranty", form.warranty || "");
 
             <button
               type="button"
-              onClick={addFeature}
-              className="flex items-center text-[#1daa61] font-medium mt-2"
+              onClick={addSpecs}
+              className="mt-2 flex items-center gap-2 text-[#1daa61] font-medium"
             >
-              <Plus className="w-4 h-4 mr-1" /> Add Feature
+              <Plus className="w-4 h-4" /> Add More Specifications
             </button>
           </div>
-{/* ✅ Shipping / Return / Warranty */}
-<div className="grid sm:grid-cols-3 gap-4">
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Charge</label>
-    <select
-      name="shipping"
-      value={form.shipping}
-      onChange={handleChange}
-      className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
-    >
-      <option value="Free Shipping">Free Shipping</option>
-      <option value="₹49">₹49</option>
-      <option value="₹99">₹99</option>
-      <option value="₹149">₹149</option>
-      <option value="Custom">Custom</option>
-    </select>
 
-    {form.shipping === "Custom" && (
-      <input
-        type="text"
-        placeholder="Enter custom charge"
-        onChange={(e) => setForm({ ...form, shipping: e.target.value })}
-        className="border rounded-lg px-4 py-2 mt-2 w-full focus:ring-2 focus:ring-[#1daa61]"
-      />
-    )}
-  </div>
+          {/* ✅ Shipping / Return / Warranty */}
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Shipping Charge</label>
 
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Return Policy</label>
-    <input
-      name="returnPolicy"
-      value={form.returnPolicy}
-      onChange={handleChange}
-      className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
-      placeholder="e.g., Easy Returns"
-    />
-  </div>
+              <select
+                name="shipping"
+                value={form.isCustomShipping ? "Custom" : form.shipping}
+                onChange={(e) => {
+                  if (e.target.value === "Custom") {
+                    setForm({ ...form, isCustomShipping: true, shipping: "" });
+                  } else {
+                    setForm({ ...form, isCustomShipping: false, shipping: e.target.value });
+                  }
+                }}
+                className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+              >
+                <option value="Free Shipping">Free Shipping</option>
+                <option value="₹49">₹49</option>
+                <option value="₹99">₹99</option>
+                <option value="₹149">₹149</option>
+                <option value="Custom">Custom</option>
+              </select>
 
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty</label>
-    <input
-      name="warranty"
-      value={form.warranty}
-      onChange={handleChange}
-      className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
-      placeholder="e.g., 1 Year Warranty"
-    />
-  </div>
-</div>
+              {form.isCustomShipping && (
+                <input
+                  type="number"
+                  placeholder="Enter custom charge"
+                  value={form.shipping}
+                  onChange={(e) => setForm({ ...form, shipping: e.target.value })}
+                  className="border rounded-lg px-4 py-2 mt-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+                />
+              )}
+            </div>
+
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Return Policy</label>
+              <input
+                name="returnPolicy"
+                value={form.returnPolicy}
+                onChange={handleChange}
+                className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+                placeholder="e.g., Easy Returns"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Warranty</label>
+              <input
+                name="warranty"
+                value={form.warranty}
+                onChange={handleChange}
+                className="border rounded-lg px-4 py-2 w-full focus:ring-2 focus:ring-[#1daa61]"
+                placeholder="e.g., 1 Year Warranty"
+              />
+            </div>
+          </div>
 
           {/* Existing Images */}
           <div>
@@ -632,15 +616,15 @@ formData.append("warranty", form.warranty || "");
           </div>
           <div className="flex gap-2">
             <input
-  name="badge"
-  value={form.badge || ""}
-  onChange={(e) => setForm((prev) => ({ ...prev, badge: e.target.value }))}
-  maxLength={20}
-  placeholder="Custom badge (e.g., Limited Edition)"
-  className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
-/>
+              name="badge"
+              value={form.badge || ""}
+              onChange={(e) => setForm((prev) => ({ ...prev, badge: e.target.value }))}
+              maxLength={20}
+              placeholder="Custom badge (e.g., Limited Edition)"
+              className="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#1daa61] placeholder-gray-400"
+            />
 
-         
+
 
           </div>
           {/* In Stock */}
